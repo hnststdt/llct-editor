@@ -13,18 +13,32 @@ const InteractiveEditorContainer = ({}: EditorContainerProps) => {
   const editorMode = useSelector((state: RootState) => state.editor.mode)
   const selection = useSelector((state: RootState) => state.editor.selection)
 
-  const addWord = (lineIndex: number, wordIndex: number) => {
+  const addWord = (lineIndex: number, wordIndex?: number) => {
     if (!editorContent || !editorContent.timeline) {
       return
     }
 
     let contents = Object.assign({}, editorContent)
 
-    contents.timeline[lineIndex].words.splice(wordIndex, 0, {
-      text: '',
-      start: 0,
-      end: 0
-    })
+    if (typeof wordIndex === 'undefined') {
+      contents.timeline.splice(lineIndex, 0, {
+        start: 0,
+        end: 0,
+        words: [
+          {
+            text: '',
+            start: 0,
+            end: 0
+          }
+        ]
+      })
+    } else {
+      contents.timeline[lineIndex].words.splice(wordIndex, 0, {
+        text: '',
+        start: 0,
+        end: 0
+      })
+    }
 
     dispatch(updateContent(contents))
   }

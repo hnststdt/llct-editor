@@ -1,15 +1,13 @@
-interface EditorComponentProps {
-  lines: LLCTCallLine[]
-  mouseMode: EditorMouseMode
-  addWord: (lineIndex: number, wordIndex: number) => void
-  clickWord: (lineIndex: number, wordIndex: number) => void
-}
-
 import { EditorMouseMode } from '@/@types/editor-mode'
 import { RootState } from '@/store'
 import '@/styles/editor/interactive.scss'
 import React, { useState, useEffect, useRef } from 'react'
-import { MdAdd, MdSpaceBar } from 'react-icons/md'
+import {
+  MdAdd,
+  MdLineWeight,
+  MdSpaceBar,
+  MdSubdirectoryArrowLeft
+} from 'react-icons/md'
 import { useDispatch, useSelector } from 'react-redux'
 
 import { setSync } from '@/store/items/editor'
@@ -19,60 +17,12 @@ const isEndSpace = (str: string) => {
   return str[str.length - 1] === ' '
 }
 
-// const findPair = (words: LLCTCallWord[], index: number) => {
-//   if (
-//     words[index].text.indexOf('<') > -1 ||
-//     words[index].text.indexOf('(') > -1
-//   ) {
-//     return findEndPair(words, index)
-//   }
-
-//   return findStartPair(words, index)
-// }
-
-// const findEndPair = (words: LLCTCallWord[], index: number): number => {
-//   let endTag = ''
-
-//   if (words[index].text.indexOf('<') > -1) {
-//     endTag = '>'
-//   } else if (words[index].text.indexOf('(') > -1) {
-//     endTag = ')'
-//   }
-
-//   let foundIndex = -1
-
-//   for (let i = index; i < words.length; i++) {
-//     if (words[i].text.indexOf(endTag) > -1) {
-//       foundIndex = i
-
-//       break
-//     }
-//   }
-
-//   return foundIndex
-// }
-
-// const findStartPair = (words: LLCTCallWord[], index: number): number => {
-//   let startTag = ''
-
-//   if (words[index].text.indexOf('>') > -1) {
-//     startTag = '<'
-//   } else if (words[index].text.indexOf(')') > -1) {
-//     startTag = '('
-//   }
-
-//   let foundIndex = -1
-
-//   for (let i = words.length - 1; i >= 0; i--) {
-//     if (words[i].text.indexOf(startTag) > -1) {
-//       foundIndex = i
-
-//       break
-//     }
-//   }
-
-//   return foundIndex
-// }
+interface EditorComponentProps {
+  lines: LLCTCallLine[]
+  mouseMode: EditorMouseMode
+  addWord: (lineIndex: number, wordIndex?: number) => void
+  clickWord: (lineIndex: number, wordIndex: number) => void
+}
 
 interface WordComponentProps {
   word: LLCTCallWord
@@ -85,8 +35,17 @@ interface WordComponentProps {
 interface AddWordComponentProps {
   lineIndex: number
   at: number
+  upLine?: boolean
+  line?: boolean
   show?: boolean
-  addWord: (lineIndex: number, wordIndex: number) => void
+  addWord: (lineIndex: number, wordIndex?: number) => void
+}
+
+interface WordsCollectionComponentProps {
+  line: LLCTCallLine
+  lineIndex: number
+  addWord: (lineIndex: number, wordIndex?: number) => void
+  clickWord: (lineIndex: number, wordIndex: number) => void
 }
 
 const parentTraversal = (
@@ -160,28 +119,40 @@ const WordComponent = ({
 
 const AddWordComponent = ({
   lineIndex,
+  line,
+  upLine,
   at,
   show,
   addWord
 }: AddWordComponentProps) => {
   return (
     <div
-      className={['word', 'add', show ? 'show' : false]
+      className={[
+        'word',
+        'add',
+        show ? 'show' : false,
+        line ? 'line' : false,
+        upLine ? 'upLine' : false
+      ]
         .filter(v => typeof v === 'string')
         .join(' ')}
       data-index={at}
-      onClick={() => addWord(lineIndex, at)}
+      onClick={() =>
+        addWord(
+          upLine || (!upLine && !line) ? lineIndex : lineIndex + 1,
+          line || upLine ? undefined : at
+        )
+      }
     >
-      <MdAdd></MdAdd>
+      {line || upLine ? (
+        <MdSubdirectoryArrowLeft
+          style={{ transform: upLine ? 'rotate(90deg)' : '' }}
+        ></MdSubdirectoryArrowLeft>
+      ) : (
+        <MdAdd></MdAdd>
+      )}
     </div>
   )
-}
-
-interface WordsCollectionComponentProps {
-  line: LLCTCallLine
-  lineIndex: number
-  addWord: (lineIndex: number, wordIndex: number) => void
-  clickWord: (lineIndex: number, wordIndex: number) => void
 }
 
 const WordsCollectionComponent = ({
@@ -232,9 +203,15 @@ const WordsCollectionComponent = ({
     >
       <AddWordComponent
         lineIndex={lineIndex}
-        at={0}
+        at={-1}
+        upLine={true}
         addWord={addWord}
         show={wordHoverAt === 0}
+      ></AddWordComponent>
+      <AddWordComponent
+        lineIndex={lineIndex}
+        at={0}
+        addWord={addWord}
       ></AddWordComponent>
       {line.words.map((word, wordIndex) => {
         return (
@@ -254,11 +231,18 @@ const WordsCollectionComponent = ({
           </>
         )
       })}
+      <AddWordComponent
+        lineIndex={lineIndex}
+        at={line.words.length - 1}
+        line={true}
+        addWord={addWord}
+        show={wordHoverAt === line.words.length - 1}
+      ></AddWordComponent>
     </div>
   )
 }
 
-const mouseModes = ['mode-select', 'mode-add', 'mode-remove']
+const mouseModes = ['mode-select', 'mode-add']
 
 const InteractiveEditorComponent = ({
   lines,

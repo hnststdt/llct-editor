@@ -86,6 +86,20 @@
             margin-right: -9px;
           }
 
+          &[data-index='0'].add {
+            margin-left: -9px;
+            margin-right: unset;
+          }
+
+          &.line,
+          &.upLine {
+            display: block;
+          }
+
+          &.upLine:hover + .word.add {
+            display: block;
+          }
+
           &.show,
           &:hover {
             display: block;

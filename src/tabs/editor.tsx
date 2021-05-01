@@ -21,12 +21,10 @@ const getModeIcon = (mode: EditorMouseMode) => {
     return <RiCursorFill></RiCursorFill>
   } else if (mode === EditorMouseMode.Add) {
     return <MdAdd></MdAdd>
-  } else if (mode === EditorMouseMode.Remove) {
-    return <MdRemove></MdRemove>
   }
 }
 
-const modeText = ['선택', '추가', '제거']
+const modeText = ['선택', '추가']
 
 const EditorTab = () => {
   const dispatch = useDispatch()

@@ -19,7 +19,10 @@ const InteractiveEditorKeyboardComponent = () => {
 
       let activated = false
 
-      if (ev.code === 'Backspace' && selection.selected.length) {
+      if (
+        (ev.code === 'Backspace' || ev.code === 'Delete') &&
+        selection.selected.length
+      ) {
         let conf = confirm(
           `정말로 선택된 ${selection.selected.length}개의 단어를 제거할까요?`
         )
