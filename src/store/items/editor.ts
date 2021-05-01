@@ -1,4 +1,4 @@
-import { EditorMouseMode } from '@/@types/editor-mode'
+import { EditorMouseMode, EditorType } from '@/@types/editor-mode'
 import { PlayingState } from '@/@types/playing'
 import WorkHistory from '@/core/history'
 
@@ -21,6 +21,7 @@ interface EditorStateTypes {
   }
   contents?: LLCTCall
   mode: EditorMouseMode
+  type: EditorType
   selection: EditorSelection
 }
 
@@ -29,6 +30,7 @@ const EditorDefaults: EditorStateTypes = {
     state: PlayingState.Paused
   },
   mode: EditorMouseMode.Select,
+  type: EditorType.Interactive,
   selection: new EditorSelection()
 }
 
@@ -69,6 +71,13 @@ export const removeWord = (data: { line: number; word: number }[]) => {
 export const setMode = (data: EditorMouseMode) => {
   return {
     type: '@llct-editor/editor/setMode',
+    data: data
+  }
+}
+
+export const setType = (data: EditorType) => {
+  return {
+    type: '@llct-editor/editor/setType',
     data: data
   }
 }
@@ -207,6 +216,10 @@ const EditorReducer = (
     case '@llct-editor/editor/setMode':
       return Object.assign({}, state, {
         mode: action.data
+      })
+    case '@llct-editor/editor/setType':
+      return Object.assign({}, state, {
+        type: action.data
       })
     case '@llct-editor/editor/setSync':
       return Object.assign({}, state, {

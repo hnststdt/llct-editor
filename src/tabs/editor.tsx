@@ -12,9 +12,9 @@ import ButtonComponent from '@/components/elements/button'
 import { PlayingState } from '@/@types/playing'
 
 import EditorContainer from '@/components/editor/editor/container'
-import { EditorMouseMode } from '@/@types/editor-mode'
+import { EditorMouseMode, EditorType } from '@/@types/editor-mode'
 
-import { setState, setMode } from '@/store/items/editor'
+import { setState, setMode, setType } from '@/store/items/editor'
 
 const getModeIcon = (mode: EditorMouseMode) => {
   if (mode === EditorMouseMode.Select) {
@@ -25,12 +25,14 @@ const getModeIcon = (mode: EditorMouseMode) => {
 }
 
 const modeText = ['선택', '추가']
+const typeText = ['일반', '텍스트']
 
 const EditorTab = () => {
   const dispatch = useDispatch()
   const music = useSelector((state: RootState) => state.editor.music)
   const player = useSelector((state: RootState) => state.editor.player)
   const mode = useSelector((state: RootState) => state.editor.mode)
+  const type = useSelector((state: RootState) => state.editor.type)
 
   const playStateChange = () => {
     dispatch(
@@ -52,6 +54,16 @@ const EditorTab = () => {
     dispatch(setMode(to))
   }
 
+  const selectEditorType = () => {
+    let to = type + 1
+
+    if (typeof EditorType[to] === 'undefined') {
+      to = EditorType.Interactive
+    }
+
+    dispatch(setType(to))
+  }
+
   const done = () => {}
 
   return (
@@ -61,6 +73,9 @@ const EditorTab = () => {
           편집기 <span className='mute'>{music && music.title}</span>
         </h1>
         <div className='control-zone'>
+          <ButtonComponent onClick={selectEditorType}>
+            {typeText[type]} 편집기
+          </ButtonComponent>
           <ButtonComponent onClick={selectMouseMode}>
             편집기 모드 : {getModeIcon(mode)} ({modeText[mode]})
           </ButtonComponent>
