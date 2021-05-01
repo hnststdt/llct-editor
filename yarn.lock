@@ -443,6 +443,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/uuid@npm:^8.3.0":
+  version: 8.3.0
+  resolution: "@types/uuid@npm:8.3.0"
+  checksum: 0f46b15020b9c252473fb327a6491fd7d238c7b5bbaebd32195a0de178db040f6abb96902507ba25dd4a673cdd9cc28b8880512dba54561e8bc60d8f326c1e30
+  languageName: node
+  linkType: hard
+
 "@types/wavesurfer.js@npm:^4.6.0":
   version: 4.6.0
   resolution: "@types/wavesurfer.js@npm:4.6.0"
@@ -6306,6 +6313,7 @@ fsevents@~2.3.1:
     "@types/react": ^17.0.3
     "@types/react-dom": ^17.0.3
     "@types/react-redux": ^7.1.16
+    "@types/uuid": ^8.3.0
     "@types/wavesurfer.js": ^4.6.0
     "@typescript-eslint/eslint-plugin": ^4.22.0
     "@typescript-eslint/parser": ^4.22.0
