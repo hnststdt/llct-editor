@@ -1,0 +1,39 @@
+$button-primary: #0945eb;
+$button-sub: rgb(139, 145, 151);
+
+.button {
+  background: $button-sub;
+  color: #fff;
+  padding: 10px 20px;
+  font-size: 14px;
+  border-radius: 16px;
+  display: flex;
+
+  cursor: pointer;
+
+  svg {
+    width: 20px;
+    height: 20px;
+    margin: auto;
+  }
+
+  &:hover {
+    background: darken($button-sub, 10);
+  }
+
+  &:active {
+    background: darken($button-sub, 15);
+  }
+
+  &.primary {
+    background: $button-primary;
+
+    &:hover {
+      background: darken($button-primary, 10);
+    }
+
+    &:active {
+      background: darken($button-primary, 15);
+    }
+  }
+}

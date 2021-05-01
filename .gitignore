@@ -1,0 +1,16 @@
+# Yarn
+.yarn/*
+!.yarn/releases
+!.yarn/plugins
+!.yarn/sdks
+!.yarn/versions
+.pnp.*
+
+# Logs
+*.log
+
+# Build
+dist
+
+# OS
+.DS_Store

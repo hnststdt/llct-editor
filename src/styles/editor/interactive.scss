@@ -1,0 +1,101 @@
+.interactive-editor {
+  .line {
+    display: flex;
+    margin-bottom: 3px;
+  }
+
+  .line-number {
+    width: 60px;
+    display: flex;
+    cursor: pointer;
+    color: rgb(95, 152, 190);
+
+    span {
+      margin: auto;
+    }
+  }
+
+  .words {
+    display: flex;
+
+    .word {
+      padding: 8px 10px;
+      border-radius: 8px;
+      background: rgb(36, 36, 36);
+      font-size: 16px;
+      min-height: 24px;
+      cursor: pointer;
+      border: 1px solid transparent;
+
+      margin-right: 3px;
+      z-index: 10;
+
+      &[data-space='true'] {
+        margin-right: 9px;
+      }
+
+      &[data-type='1'] {
+        color: rgb(34, 202, 84);
+      }
+
+      &[data-type='2'] {
+        color: rgb(151, 177, 187);
+      }
+
+      &[data-type='3'] {
+        color: rgb(24, 107, 231);
+      }
+
+      .space {
+        opacity: 0.4;
+      }
+
+      .bracket {
+        color: rgb(224, 135, 99);
+      }
+
+      &.selected {
+        background: rgb(54, 67, 73);
+        border: 1px solid rgb(95, 116, 126);
+      }
+
+      &.add {
+        background: transparent;
+        display: none;
+        margin-left: -9px;
+        z-index: 9;
+      }
+    }
+  }
+
+  &.mode-add {
+    .words {
+      .word {
+        &:not(.add):hover + .word.add {
+          display: block;
+        }
+
+        &.add {
+          background: transparent;
+          display: none;
+          margin-left: -9px;
+          z-index: 9;
+
+          &[data-index='0'] {
+            margin-left: unset;
+            margin-right: -9px;
+          }
+
+          &.show,
+          &:hover {
+            display: block;
+          }
+
+          &:hover {
+            background: rgb(37, 37, 37);
+          }
+        }
+      }
+    }
+  }
+}

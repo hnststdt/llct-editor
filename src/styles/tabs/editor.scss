@@ -1,0 +1,37 @@
+.music-title {
+  letter-spacing: -2px;
+
+  span {
+    font-size: 20px;
+    margin-left: 10px;
+    color: rgb(151, 151, 151);
+  }
+}
+
+.react-monaco-editor-container {
+  height: 80%;
+}
+
+.warning {
+  color: rgb(255, 174, 0);
+}
+
+.title-zone {
+  display: flex;
+
+  .control-zone {
+    display: flex;
+
+    margin-left: auto;
+    margin-top: auto;
+    margin-bottom: auto;
+
+    & > * {
+      margin-right: 10px;
+
+      &:last-child {
+        margin-right: unset;
+      }
+    }
+  }
+}
