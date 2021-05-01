@@ -2,18 +2,14 @@ import { RootState } from '@/store'
 import { useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 
-import { removeWord, undo } from '@/store/items/editor'
+import { removeWord, undo, redo } from '@/store/items/editor'
 
 const InteractiveEditorKeyboardComponent = () => {
   const dispatch = useDispatch()
   const selection = useSelector((state: RootState) => state.editor.selection)
 
   useEffect(() => {
-    console.log(window)
-
     window.addEventListener('keydown', ev => {
-      console.log(ev.code)
-
       if (
         (ev.target as HTMLElement).tagName === 'TEXTAREA' ||
         (ev.target as HTMLElement).tagName === 'INPUT'
@@ -35,6 +31,12 @@ const InteractiveEditorKeyboardComponent = () => {
         }
 
         activated = true
+      } else if (
+        ev.code === 'KeyZ' &&
+        ev.shiftKey &&
+        (ev.ctrlKey || ev.metaKey)
+      ) {
+        dispatch(redo())
       } else if (ev.code === 'KeyZ' && (ev.ctrlKey || ev.metaKey)) {
         dispatch(undo())
       }

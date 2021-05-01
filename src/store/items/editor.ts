@@ -1,5 +1,6 @@
 import { EditorMouseMode } from '@/@types/editor-mode'
 import { PlayingState } from '@/@types/playing'
+import WorkHistory from '@/core/history'
 
 import EditorSelection from '@/core/selection'
 import CallTimeSync from '@/core/timesync'
@@ -85,6 +86,12 @@ export const undo = () => {
   }
 }
 
+export const redo = () => {
+  return {
+    type: '@llct-editor/editor/redo'
+  }
+}
+
 const removeWordsHandler = (
   state = EditorDefaults,
   action: EditorAction
@@ -120,6 +127,8 @@ const removeWordsHandler = (
   })
 }
 
+const histories = new WorkHistory()
+
 const updateWrapper = (
   state = EditorDefaults,
   action: EditorAction,
@@ -127,18 +136,23 @@ const updateWrapper = (
 ) => {
   let data = func(state, action)
 
-  // TODO : works
+  if (data.contents) {
+    histories.add((data.contents as unknown) as Record<string, unknown>)
+  }
 
   return data
 }
 
-const undoHandler = (
-  state = EditorDefaults,
-  action: EditorAction
-): EditorStateTypes => {
-  console.log(state, action)
+const undoHandler = (state = EditorDefaults): EditorStateTypes => {
+  return Object.assign({}, state, {
+    contents: histories.goBack()
+  })
+}
 
-  return state
+const redoHandler = (state = EditorDefaults): EditorStateTypes => {
+  return Object.assign({}, state, {
+    contents: histories.goForward()
+  })
 }
 
 const EditorReducer = (
@@ -187,7 +201,9 @@ const EditorReducer = (
     case '@llct-editor/editor/removeWords':
       return updateWrapper(state, action, removeWordsHandler)
     case '@llct-editor/editor/undo':
-      return undoHandler(state, action)
+      return undoHandler(state)
+    case '@llct-editor/editor/redo':
+      return redoHandler(state)
     case '@llct-editor/editor/setMode':
       return Object.assign({}, state, {
         mode: action.data
