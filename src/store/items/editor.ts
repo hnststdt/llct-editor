@@ -1,4 +1,8 @@
-import { EditorMouseMode, EditorType } from '@/@types/editor-mode'
+import {
+  EditorMode,
+  EditorSelectionMode,
+  EditorType
+} from '@/@types/editor-mode'
 import { PlayingState } from '@/@types/playing'
 import WorkHistory from '@/core/history'
 
@@ -20,7 +24,8 @@ interface EditorStateTypes {
     sync?: CallTimeSync
   }
   contents?: LLCTCall
-  mode: EditorMouseMode
+  selectionMode: EditorSelectionMode
+  mode: EditorMode
   type: EditorType
   selection: EditorSelection
 }
@@ -29,7 +34,8 @@ const EditorDefaults: EditorStateTypes = {
   player: {
     state: PlayingState.Paused
   },
-  mode: EditorMouseMode.Select,
+  selectionMode: EditorSelectionMode.Select,
+  mode: EditorMode.Metadata,
   type: EditorType.Interactive,
   selection: new EditorSelection()
 }
@@ -68,9 +74,9 @@ export const removeWord = (data: { line: number; word: number }[]) => {
   }
 }
 
-export const setMode = (data: EditorMouseMode) => {
+export const setSelectionMode = (data: EditorSelectionMode) => {
   return {
-    type: '@llct-editor/editor/setMode',
+    type: '@llct-editor/editor/setSelectionMode',
     data: data
   }
 }
@@ -78,6 +84,13 @@ export const setMode = (data: EditorMouseMode) => {
 export const setType = (data: EditorType) => {
   return {
     type: '@llct-editor/editor/setType',
+    data: data
+  }
+}
+
+export const setMode = (data: EditorMode) => {
+  return {
+    type: '@llct-editor/editor/setMode',
     data: data
   }
 }
@@ -213,6 +226,10 @@ const EditorReducer = (
       return undoHandler(state)
     case '@llct-editor/editor/redo':
       return redoHandler(state)
+    case '@llct-editor/editor/setSelectionMode':
+      return Object.assign({}, state, {
+        selectionMode: action.data
+      })
     case '@llct-editor/editor/setMode':
       return Object.assign({}, state, {
         mode: action.data

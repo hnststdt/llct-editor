@@ -1,6 +1,6 @@
 import PlayerContainer from '@/components/songs/player/container'
 
-import { MdPlayArrow, MdPause, MdAdd, MdRemove } from 'react-icons/md'
+import { MdPlayArrow, MdPause, MdAdd } from 'react-icons/md'
 import { RiCursorFill } from 'react-icons/ri'
 
 import { useDispatch, useSelector } from 'react-redux'
@@ -12,25 +12,38 @@ import ButtonComponent from '@/components/elements/button'
 import { PlayingState } from '@/@types/playing'
 
 import EditorContainer from '@/components/editor/editor/container'
-import { EditorMouseMode, EditorType } from '@/@types/editor-mode'
+import {
+  EditorSelectionMode,
+  EditorType,
+  EditorMode
+} from '@/@types/editor-mode'
 
-import { setState, setMode, setType } from '@/store/items/editor'
+import {
+  setState,
+  setSelectionMode,
+  setType,
+  setMode
+} from '@/store/items/editor'
 
-const getModeIcon = (mode: EditorMouseMode) => {
-  if (mode === EditorMouseMode.Select) {
+const getModeIcon = (mode: EditorSelectionMode) => {
+  if (mode === EditorSelectionMode.Select) {
     return <RiCursorFill></RiCursorFill>
-  } else if (mode === EditorMouseMode.Add) {
+  } else if (mode === EditorSelectionMode.Add) {
     return <MdAdd></MdAdd>
   }
 }
 
-const modeText = ['선택', '추가']
+const selectionModeText = ['선택', '추가']
+const modeText = ['metadata', 'timeline']
 const typeText = ['일반', '텍스트']
 
 const EditorTab = () => {
   const dispatch = useDispatch()
   const music = useSelector((state: RootState) => state.editor.music)
   const player = useSelector((state: RootState) => state.editor.player)
+  const selectionMode = useSelector(
+    (state: RootState) => state.editor.selectionMode
+  )
   const mode = useSelector((state: RootState) => state.editor.mode)
   const type = useSelector((state: RootState) => state.editor.type)
 
@@ -44,11 +57,21 @@ const EditorTab = () => {
     )
   }
 
-  const selectMouseMode = () => {
+  const selectSelectionMode = () => {
+    let to = selectionMode + 1
+
+    if (typeof EditorSelectionMode[to] === 'undefined') {
+      to = EditorSelectionMode.Select
+    }
+
+    dispatch(setSelectionMode(to))
+  }
+
+  const selectEditorMode = () => {
     let to = mode + 1
 
-    if (typeof EditorMouseMode[to] === 'undefined') {
-      to = EditorMouseMode.Select
+    if (typeof EditorMode[to] === 'undefined') {
+      to = EditorMode.Metadata
     }
 
     dispatch(setMode(to))
@@ -73,11 +96,15 @@ const EditorTab = () => {
           편집기 <span className='mute'>{music && music.title}</span>
         </h1>
         <div className='control-zone'>
+          <ButtonComponent onClick={selectEditorMode}>
+            {modeText[mode]}
+          </ButtonComponent>
           <ButtonComponent onClick={selectEditorType}>
             {typeText[type]} 편집기
           </ButtonComponent>
-          <ButtonComponent onClick={selectMouseMode}>
-            편집기 모드 : {getModeIcon(mode)} ({modeText[mode]})
+          <ButtonComponent onClick={selectSelectionMode}>
+            선택 모드 : {getModeIcon(selectionMode)} (
+            {selectionModeText[selectionMode]})
           </ButtonComponent>
           <ButtonComponent onClick={playStateChange}>
             {player.state === PlayingState.Playing ? (
@@ -95,7 +122,7 @@ const EditorTab = () => {
       </div>
 
       <PlayerContainer></PlayerContainer>
-      <EditorContainer></EditorContainer>
+      <EditorContainer mode={mode}></EditorContainer>
     </div>
   )
 }

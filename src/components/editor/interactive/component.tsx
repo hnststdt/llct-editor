@@ -1,4 +1,4 @@
-import { EditorMouseMode } from '@/@types/editor-mode'
+import { EditorSelectionMode } from '@/@types/editor-mode'
 import { RootState } from '@/store'
 import '@/styles/editor/interactive.scss'
 import React, { useState, useEffect, useRef } from 'react'
@@ -19,7 +19,7 @@ const isEndSpace = (str: string) => {
 
 interface EditorComponentProps {
   lines: LLCTCallLine[]
-  mouseMode: EditorMouseMode
+  mouseMode: EditorSelectionMode
   addWord: (lineIndex: number, wordIndex?: number) => void
   clickWord: (lineIndex: number, wordIndex: number) => void
 }

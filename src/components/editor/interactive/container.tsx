@@ -10,7 +10,9 @@ interface EditorContainerProps {}
 const InteractiveEditorContainer = ({}: EditorContainerProps) => {
   const dispatch = useDispatch()
   const editorContent = useSelector((state: RootState) => state.editor.contents)
-  const editorMode = useSelector((state: RootState) => state.editor.mode)
+  const editorSelectionMode = useSelector(
+    (state: RootState) => state.editor.selectionMode
+  )
   const selection = useSelector((state: RootState) => state.editor.selection)
 
   const addWord = (lineIndex: number, wordIndex?: number) => {
@@ -73,7 +75,7 @@ const InteractiveEditorContainer = ({}: EditorContainerProps) => {
       <InteractiveEditorKeyboardComponent></InteractiveEditorKeyboardComponent>
       <InteractiveEditorComponent
         lines={(editorContent && editorContent.timeline) || []}
-        mouseMode={editorMode}
+        mouseMode={editorSelectionMode}
         addWord={addWord}
         clickWord={clickWord}
       ></InteractiveEditorComponent>

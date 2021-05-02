@@ -27,6 +27,7 @@ interface LLCTCallMetadata {
     notPerformed?: boolean
     notAccurate?: boolean
     singAlong?: boolean
+    unfinished?: boolean
   }
   blade?: {
     text?: string

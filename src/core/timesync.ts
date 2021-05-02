@@ -62,8 +62,8 @@ export default class CallTimeSync {
     for (let i = 0; i < this.caches.lines.length; i++) {
       let item = this.caches.lines[i] as HTMLDivElement
 
-      if (typeof item.dataset.passed !== 'undefined') {
-        item.setAttribute('data-passed', '')
+      if (item.dataset.passed) {
+        item.dataset.passed = 'false'
       }
 
       let queries = item.querySelectorAll('.word')

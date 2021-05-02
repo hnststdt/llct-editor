@@ -6,11 +6,16 @@ import { useEffect, useState } from 'react'
 
 import { RootState } from '@/store'
 import * as calls from '@/utils/call'
-import { EditorType } from '@/@types/editor-mode'
+import { EditorMode, EditorType } from '@/@types/editor-mode'
 
 import { updateContent } from '@/store/items/editor'
+import MetadataEditorContainer from '../metadata/container'
 
-const EditorComponent = () => {
+interface EditorComponentProps {
+  mode: EditorMode
+}
+
+const EditorComponent = ({ mode }: EditorComponentProps) => {
   const dispatch = useDispatch()
 
   const call = useSelector((state: RootState) => state.call)
@@ -39,7 +44,11 @@ const EditorComponent = () => {
     dispatch(updateContent(calls.renderText(text)))
   }
 
-  return (
+  return mode === EditorMode.Metadata ? (
+    <div className='editor'>
+      <MetadataEditorContainer></MetadataEditorContainer>
+    </div>
+  ) : (
     <div className='editor'>
       {type == EditorType.Interactive ? (
         <InteractiveEditorContainer></InteractiveEditorContainer>

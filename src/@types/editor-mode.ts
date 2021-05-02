@@ -1,4 +1,4 @@
-export enum EditorMouseMode {
+export enum EditorSelectionMode {
   Select,
   Add
 }
@@ -6,4 +6,9 @@ export enum EditorMouseMode {
 export enum EditorType {
   Interactive,
   Text
+}
+
+export enum EditorMode {
+  Metadata,
+  Timeline
 }

@@ -1,11 +1,16 @@
+import { EditorMode } from '@/@types/editor-mode'
 import EditorDataContainer from '../data/container'
 import EditorComponent from './component'
 
-const EditorContainer = () => {
+interface EditorContainerProps {
+  mode: EditorMode
+}
+
+const EditorContainer = ({ mode }: EditorContainerProps) => {
   return (
     <>
       <EditorDataContainer></EditorDataContainer>
-      <EditorComponent></EditorComponent>
+      <EditorComponent mode={mode}></EditorComponent>
     </>
   )
 }
