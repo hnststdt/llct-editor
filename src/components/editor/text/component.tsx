@@ -1,10 +1,11 @@
-import MonacoEditor from 'react-monaco-editor'
+import MonacoEditor, { ChangeHandler } from 'react-monaco-editor'
 
 interface TextEditorComponentProps {
   value: string
+  change: ChangeHandler
 }
 
-const TextEditorComponent = ({ value }: TextEditorComponentProps) => {
+const TextEditorComponent = ({ value, change }: TextEditorComponentProps) => {
   return (
     <>
       <MonacoEditor
@@ -18,6 +19,7 @@ const TextEditorComponent = ({ value }: TextEditorComponentProps) => {
         language='plain'
         width='100%'
         height='800px'
+        onChange={change}
         value={value}
       ></MonacoEditor>
     </>

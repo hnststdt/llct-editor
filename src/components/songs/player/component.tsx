@@ -43,7 +43,13 @@ const PlayerComponent = ({ audioSrc }: PlayerComponentProps) => {
     }
 
     player.instance.on('audioprocess', () => {
-      player.sync!.setTime(player.instance!.getCurrentTime() * 100)
+      requestAnimationFrame(() => {
+        player.sync!.setTime(player.instance!.getCurrentTime() * 100)
+      })
+    })
+
+    player.instance.on('seek', () => {
+      player.sync!.fullRenderOnce()
     })
 
     setInitialized(true)

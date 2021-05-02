@@ -90,6 +90,9 @@ const WordComponent = ({
         .filter(v => typeof v !== 'undefined')
         .join(' ')}
       data-space={isEndSpace(word.text)}
+      data-word='true'
+      data-start={word.start}
+      data-end={word.end}
       data-type={word.type}
       data-index={index}
       onClick={clickHandler}
