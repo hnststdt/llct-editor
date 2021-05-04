@@ -1,8 +1,23 @@
 .editor {
-  margin-bottom: 10vh;
+  margin-bottom: 3vh;
+  display: flex;
 }
 
+.text-editor {
+  width: 100%;
+}
+
+$lyrics-color: #fff;
+$call-color: rgb(34, 202, 84);
+$comment-color: rgb(151, 177, 187);
+$calllyrics-color: rgb(24, 107, 231);
+
 .interactive-editor {
+  flex: 2;
+  max-height: 75vh;
+  overflow: auto;
+  margin-right: 30px;
+
   .line {
     display: flex;
     margin-bottom: 3px;
@@ -49,15 +64,15 @@
       }
 
       &[data-type='1'] {
-        color: rgb(34, 202, 84);
+        color: $call-color;
       }
 
       &[data-type='2'] {
-        color: rgb(151, 177, 187);
+        color: $comment-color;
       }
 
       &[data-type='3'] {
-        color: rgb(24, 107, 231);
+        color: $calllyrics-color;
       }
 
       &[data-active='true'] {
@@ -135,5 +150,55 @@
         }
       }
     }
+  }
+}
+
+.interactive-properties {
+  flex: 1;
+
+  .item {
+    margin-bottom: 10px;
+    display: flex;
+
+    .button {
+      margin-left: 30px;
+    }
+  }
+
+  input[type='number'], input[type='text'] {
+    background: transparent;
+    border: 0px;
+    border-bottom: 1px solid rgb(26, 96, 226);
+    color: #fff;
+
+    padding: 5px 20px;
+  }
+
+  label {
+    margin-left: 10px;
+  }
+
+  .radiobox {
+    display: flex;
+
+    .radio {
+      padding: 5px 20px;
+    }
+  }
+
+  .lyrics {
+    color: $lyrics-color;
+  }
+
+  .call {
+    color: $call-color;
+  }
+
+  .comment {
+    color: $comment-color;
+  }
+
+  .calllyrics {
+    color: $calllyrics-color;
   }
 }

@@ -53,23 +53,23 @@ const EditorComponent = ({ mode }: EditorComponentProps) => {
       {type == EditorType.Interactive ? (
         <InteractiveEditorContainer></InteractiveEditorContainer>
       ) : (
-        <>
+        <div className='text-editor'>
           <p>
             경고:{' '}
             <span className='warning'>
-              아래에 있는 편집기의 내용이 수정될 경우 작업 된 모든 싱크가 덮어
-              쓰입니다. 가사를 한 번에 모두 작성하실 때만 사용하세요. 여기서 다
-              작성하셨다면 일반 에디터에서 수정하세요.
+              아래에 있는 편집기의 내용이 수정될 경우 현재 적용되어 있는 모든
+              싱크가 초기 값으로 덮어 쓰입니다. 가사를 한 번에 모두 작성하실 때만
+              사용하세요. 여기서 다 작성하셨다면 일반 에디터에서 수정하세요.
             </span>
             <br></br>
-            (글자 단위로 추가, 삭제, 수정 정도는 마우스 오른쪽 버튼을 눌러
-            이용하세요.)
+            (글자 단위로 추가, 삭제, 수정 정도는 일반 편집기에서도 이용할 수
+            있습니다.)
           </p>
           <TextEditorContainer
             value={value}
             change={onChange}
           ></TextEditorContainer>
-        </>
+        </div>
       )}
     </div>
   )

@@ -25,7 +25,15 @@ export default class CallTimeSync {
     this.time = Math.floor(time)
   }
 
+  isStarted () {
+    return this.timer !== 0 && typeof this.timer !== undefined
+  }
+
   start () {
+    if (this.timer) {
+      return
+    }
+
     const update = () => {
       this.update()
 
@@ -41,6 +49,7 @@ export default class CallTimeSync {
     }
 
     cancelAnimationFrame(this.timer)
+    this.timer = undefined
   }
 
   fullRenderOnce () {
@@ -53,11 +62,13 @@ export default class CallTimeSync {
     })
   }
 
+  clearCache () {
+    this.caches.lines = this.root.querySelectorAll('.line')
+    this.caches.lineWords = []
+  }
+
   clearBefore () {
-    if (!this.caches.lines || !this.caches.lines.length) {
-      this.caches.lines = this.root.querySelectorAll('.line')
-      this.caches.lineWords = []
-    }
+    this.clearCache()
 
     for (let i = 0; i < this.caches.lines.length; i++) {
       let item = this.caches.lines[i] as HTMLDivElement
@@ -86,8 +97,7 @@ export default class CallTimeSync {
     // this.break = 0
 
     if (!this.caches.lines || !this.caches.lines.length) {
-      this.caches.lines = this.root.querySelectorAll('.line')
-      this.caches.lineWords = []
+      this.clearCache()
     }
 
     for (let i = 0; i < this.caches.lines.length; i++) {

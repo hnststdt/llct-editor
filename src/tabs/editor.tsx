@@ -24,6 +24,7 @@ import {
   setType,
   setMode
 } from '@/store/items/editor'
+import { useState } from 'react'
 
 const getModeIcon = (mode: EditorSelectionMode) => {
   if (mode === EditorSelectionMode.Select) {
@@ -46,6 +47,7 @@ const EditorTab = () => {
   )
   const mode = useSelector((state: RootState) => state.editor.mode)
   const type = useSelector((state: RootState) => state.editor.type)
+  const [_, update] = useState<number>(0)
 
   const playStateChange = () => {
     dispatch(
@@ -55,6 +57,25 @@ const EditorTab = () => {
           : PlayingState.Playing
       )
     )
+  }
+
+  const changePlayRate = (add: number) => {
+    if (!player.instance) {
+      return
+    }
+
+    let rate = player.instance.getPlaybackRate()
+
+    if (rate + add > 2) {
+      rate = 0.25
+    } else if (rate + add < 0.25) {
+      rate = 2
+    } else {
+      rate += add
+    }
+
+    player.instance.setPlaybackRate(rate)
+    update(Math.random())
   }
 
   const selectSelectionMode = () => {
@@ -105,6 +126,12 @@ const EditorTab = () => {
           <ButtonComponent onClick={selectSelectionMode}>
             선택 모드 : {getModeIcon(selectionMode)} (
             {selectionModeText[selectionMode]})
+          </ButtonComponent>
+          <ButtonComponent
+            onClick={() => changePlayRate(0.25)}
+            onRightClick={() => changePlayRate(-0.25)}
+          >
+            {player.instance && player.instance.getPlaybackRate()}x
           </ButtonComponent>
           <ButtonComponent onClick={playStateChange}>
             {player.state === PlayingState.Playing ? (

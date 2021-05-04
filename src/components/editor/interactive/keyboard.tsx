@@ -42,6 +42,8 @@ const InteractiveEditorKeyboardComponent = () => {
         dispatch(redo())
       } else if (ev.code === 'KeyZ' && (ev.ctrlKey || ev.metaKey)) {
         dispatch(undo())
+      } else if (ev.code === 'Escape') {
+        selection.clear()
       }
 
       if (activated) {

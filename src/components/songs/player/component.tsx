@@ -5,6 +5,7 @@ import WaveSurfer from 'wavesurfer.js'
 
 import { setInstance } from '@/store/items/editor'
 import { PlayingState } from '@/@types/playing'
+import { EditorMode } from '@/@types/editor-mode'
 
 interface PlayerComponentProps {
   audioSrc?: string
@@ -17,6 +18,7 @@ const PlayerComponent = ({ audioSrc }: PlayerComponentProps) => {
   const player = useSelector((state: RootState) => state.editor.player)
   const [loaded, setLoaded] = useState<boolean>(false)
   const [initialized, setInitialized] = useState<boolean>(false)
+  const mode = useSelector((state: RootState) => state.editor.mode)
 
   /**
    * 플레이어 ref가 지정될 때 실행, WaveSurfer 초기화
@@ -55,6 +57,18 @@ const PlayerComponent = ({ audioSrc }: PlayerComponentProps) => {
     setInitialized(true)
   }, [player.instance, player.sync, initialized])
 
+  useEffect(() => {
+    if (!player.sync) {
+      return
+    }
+
+    if (mode !== EditorMode.Timeline) {
+      player.sync.stop()
+    } else if (player.state === PlayingState.Playing) {
+      player.sync.start()
+    }
+  }, [mode, player.sync])
+
   /**
    * audioSrc가 변경될 때 실행
    */
@@ -66,9 +80,6 @@ const PlayerComponent = ({ audioSrc }: PlayerComponentProps) => {
     player.instance.load(audioSrc)
   }, [player.instance, audioSrc])
 
-  /**
-   * 플레이어 로드 완료시 실행
-   */
   useEffect(() => {
     if (!player.instance) {
       return
@@ -79,21 +90,7 @@ const PlayerComponent = ({ audioSrc }: PlayerComponentProps) => {
     } else {
       player.instance.pause()
     }
-  }, [loaded])
-
-  useEffect(() => {
-    if (!player.instance) {
-      return
-    }
-
-    if (player.state === PlayingState.Playing) {
-      player.instance.play()
-    } else {
-      player.instance.pause()
-    }
-
-    // dispatch(setState(player.state))
-  }, [player.state])
+  }, [loaded, player.state])
 
   useEffect(() => {
     if (!player.sync) {
@@ -102,12 +99,10 @@ const PlayerComponent = ({ audioSrc }: PlayerComponentProps) => {
 
     if (player.state === PlayingState.Playing) {
       player.sync.start()
-    } else {
+    } else if (player.state === PlayingState.Paused) {
       player.sync.stop()
     }
-
-    // dispatch(setState(player.state))
-  }, [player.state])
+  }, [player.state, player.sync])
 
   return (
     <div className='player'>

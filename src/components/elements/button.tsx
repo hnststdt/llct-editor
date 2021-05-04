@@ -1,20 +1,36 @@
 import '@/styles/elements/button.scss'
+import React from 'react'
 
-interface ButtonComponentProps {
+interface ButtonComponentProps extends React.AllHTMLAttributes<HTMLDivElement> {
   text?: string
   theme?: string
   onClick: () => void
-  children?: unknown
+  onRightClick?: () => void
+  children?: Element
 }
 
 const ButtonComponent = ({
   text,
   theme,
   onClick,
-  children
+  onRightClick,
+  children,
+  ...props
 }: ButtonComponentProps) => {
+  const rightClickHandler = (ev: React.MouseEvent<HTMLDivElement>) => {
+    if (onRightClick) {
+      ev.preventDefault()
+      onRightClick()
+    }
+  }
+
   return (
-    <div className={['button', theme].join(' ')} onClick={onClick}>
+    <div
+      className={['button', theme].join(' ')}
+      onClick={onClick}
+      onContextMenu={rightClickHandler}
+      {...props}
+    >
       {text && <span className='text'>{text}</span>}
       {children}
     </div>

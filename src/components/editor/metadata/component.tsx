@@ -7,13 +7,14 @@ const MetadataEditorComponent = () => {
     <div className='metadata-editor'>
       <h3>색상</h3>
 
-      <p>
+      <div>
         블레이드 추천 색상 : <SliderPicker></SliderPicker>
-      </p>
+      </div>
 
-      <p>
-        블레이드 추천 색상 이름 : <input type='text' placeholder='ex) 치카 색 (귤색)'></input>
-      </p>
+      <div>
+        블레이드 추천 색상 이름 :{' '}
+        <input type='text' placeholder='ex) 치카 색 (귤색)'></input>
+      </div>
     </div>
   )
 }

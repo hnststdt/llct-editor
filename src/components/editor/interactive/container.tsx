@@ -4,6 +4,7 @@ import InteractiveEditorComponent from './component'
 
 import { updateContent } from '@/store/items/editor'
 import InteractiveEditorKeyboardComponent from './keyboard'
+import InteractiveEditorPropertiesComponent from './properties'
 
 interface EditorContainerProps {}
 
@@ -70,6 +71,27 @@ const InteractiveEditorContainer = ({}: EditorContainerProps) => {
     }
   }
 
+  const updateWords = (words: WordsUpdates[]) => {
+    if (!editorContent || !editorContent.timeline) {
+      return
+    }
+
+    let contents = Object.assign({}, editorContent)
+
+    for (let i = 0; i < words.length; i++) {
+      let updates = words[i]
+
+      for (let d = 0; d < updates.datas.length; d++) {
+        let data = updates.datas[d]
+        contents.timeline[updates.line].words[updates.word][
+          data.type
+        ] = data.data as never
+      }
+    }
+
+    dispatch(updateContent(contents))
+  }
+
   return (
     <>
       <InteractiveEditorKeyboardComponent></InteractiveEditorKeyboardComponent>
@@ -79,6 +101,11 @@ const InteractiveEditorContainer = ({}: EditorContainerProps) => {
         addWord={addWord}
         clickWord={clickWord}
       ></InteractiveEditorComponent>
+      <InteractiveEditorPropertiesComponent
+        lines={(editorContent && editorContent.timeline) || []}
+        selection={selection}
+        updateWords={updateWords}
+      ></InteractiveEditorPropertiesComponent>
     </>
   )
 }

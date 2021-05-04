@@ -1,7 +1,7 @@
 import { EditorSelectionMode } from '@/@types/editor-mode'
 import { RootState } from '@/store'
 import '@/styles/editor/interactive.scss'
-import React, { useState, useEffect, useRef } from 'react'
+import React, { useState, useEffect, useRef, useLayoutEffect } from 'react'
 import {
   MdAdd,
   MdLineWeight,
@@ -264,7 +264,14 @@ const InteractiveEditorComponent = ({
   }
 
   useEffect(() => {
-    if (!ref.current || sync) {
+    if (!ref.current) {
+      return
+    }
+
+    if (sync) {
+      sync.root = ref.current
+      sync.clearBefore()
+
       return
     }
 

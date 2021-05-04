@@ -11,6 +11,10 @@ $button-sub: rgb(139, 145, 151);
 
   cursor: pointer;
 
+  span {
+    margin: auto;
+  }
+
   svg {
     width: 20px;
     height: 20px;
