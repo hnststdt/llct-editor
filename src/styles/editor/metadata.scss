@@ -1,3 +1,11 @@
 .metadata-editor {
-  
+  input[type='number'],
+  input[type='text'] {
+    background: transparent;
+    border: 0px;
+    border-bottom: 1px solid rgb(26, 96, 226);
+    color: #fff;
+
+    padding: 5px 20px;
+  }
 }

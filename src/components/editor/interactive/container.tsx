@@ -94,7 +94,9 @@ const InteractiveEditorContainer = ({}: EditorContainerProps) => {
 
   return (
     <>
-      <InteractiveEditorKeyboardComponent></InteractiveEditorKeyboardComponent>
+      <InteractiveEditorKeyboardComponent
+        updateWords={updateWords}
+      ></InteractiveEditorKeyboardComponent>
       <InteractiveEditorComponent
         lines={(editorContent && editorContent.timeline) || []}
         mouseMode={editorSelectionMode}

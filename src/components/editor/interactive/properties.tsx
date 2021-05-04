@@ -99,6 +99,10 @@ const InteractiveEditorPropertiesComponent = ({
     for (let i = 0; i < selection.selected.length; i++) {
       let selected = selection.selected[i]
 
+      if (!lines[selected.line] || !lines[selected.line].words[selected.word]) {
+        continue
+      }
+
       let word = lines[selected.line].words[selected.word]
       res.push(word[type])
     }
@@ -106,7 +110,7 @@ const InteractiveEditorPropertiesComponent = ({
     let data = res.filter((v, i, a) => a.indexOf(v) === i)
 
     if (data.length === 1) {
-      return [undefined, data[0]]
+      return [data[0] || 'X', data[0]]
     } else {
       return [!data.length ? 'X' : data.join(', '), undefined]
     }

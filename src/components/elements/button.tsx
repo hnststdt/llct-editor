@@ -6,7 +6,7 @@ interface ButtonComponentProps extends React.AllHTMLAttributes<HTMLDivElement> {
   theme?: string
   onClick: () => void
   onRightClick?: () => void
-  children?: Element
+  children?: React.ReactNode
 }
 
 const ButtonComponent = ({

@@ -26,6 +26,7 @@ interface EditorStateTypes {
   contents?: LLCTCall
   selectionMode: EditorSelectionMode
   mode: EditorMode
+  offset: number
   type: EditorType
   selection: EditorSelection
 }
@@ -36,6 +37,7 @@ const EditorDefaults: EditorStateTypes = {
   },
   selectionMode: EditorSelectionMode.Select,
   mode: EditorMode.Metadata,
+  offset: -10,
   type: EditorType.Interactive,
   selection: new EditorSelection()
 }
@@ -84,6 +86,13 @@ export const setSelectionMode = (data: EditorSelectionMode) => {
 export const setType = (data: EditorType) => {
   return {
     type: '@llct-editor/editor/setType',
+    data: data
+  }
+}
+
+export const setOffset = (data: number) => {
+  return {
+    type: '@llct-editor/editor/setOffset',
     data: data
   }
 }
@@ -237,6 +246,10 @@ const EditorReducer = (
     case '@llct-editor/editor/setType':
       return Object.assign({}, state, {
         type: action.data
+      })
+    case '@llct-editor/editor/setOffset':
+      return Object.assign({}, state, {
+        offset: action.data
       })
     case '@llct-editor/editor/setSync':
       return Object.assign({}, state, {

@@ -1,13 +1,8 @@
 import { EditorSelectionMode } from '@/@types/editor-mode'
 import { RootState } from '@/store'
 import '@/styles/editor/interactive.scss'
-import React, { useState, useEffect, useRef, useLayoutEffect } from 'react'
-import {
-  MdAdd,
-  MdLineWeight,
-  MdSpaceBar,
-  MdSubdirectoryArrowLeft
-} from 'react-icons/md'
+import React, { useState, useEffect, useRef } from 'react'
+import { MdAdd, MdSpaceBar, MdSubdirectoryArrowLeft } from 'react-icons/md'
 import { useDispatch, useSelector } from 'react-redux'
 
 import { setSync } from '@/store/items/editor'
@@ -175,7 +170,9 @@ const WordsCollectionComponent = ({
         l === lineIndex ||
         (typeof l === 'undefined' && typeof w === 'undefined')
       ) {
-        update(Math.random())
+        requestAnimationFrame(() => {
+          update(Math.random())
+        })
       }
     })
 
