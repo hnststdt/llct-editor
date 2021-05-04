@@ -22,7 +22,8 @@ import {
   setState,
   setSelectionMode,
   setType,
-  setMode
+  setMode,
+  download
 } from '@/store/items/editor'
 import { useState } from 'react'
 
@@ -108,7 +109,14 @@ const EditorTab = () => {
     dispatch(setType(to))
   }
 
-  const done = () => {}
+  const done = () => {
+    dispatch(
+      dispatch({
+        type: '@llct-editor/tabs/update',
+        data: 2
+      })
+    )
+  }
 
   return (
     <div className='tab'>

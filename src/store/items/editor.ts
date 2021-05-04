@@ -62,7 +62,19 @@ export const setInstance = (instance: WaveSurfer) => {
   }
 }
 
-export const updateContent = (data: LLCTCall) => {
+export const updateContent = (data: LLCTCall, noTimeUpdate?: boolean) => {
+  if (!noTimeUpdate) {
+    if (!data.metadata) {
+      data.metadata = {}
+    }
+
+    if (!data.metadata.editor) {
+      data.metadata.editor = {}
+    }
+
+    data.metadata.editor.lastEdit = Date.now()
+  }
+
   return {
     type: '@llct-editor/editor/updateContent',
     data: data
@@ -120,6 +132,12 @@ export const undo = () => {
 export const redo = () => {
   return {
     type: '@llct-editor/editor/redo'
+  }
+}
+
+export const download = () => {
+  return {
+    type: '@llct-editor/editor/requestDownload'
   }
 }
 
@@ -184,6 +202,23 @@ const redoHandler = (state = EditorDefaults): EditorStateTypes => {
   return Object.assign({}, state, {
     contents: histories.goForward()
   })
+}
+
+const downloadHandler = (contents: LLCTCall | undefined) => {
+  if (!contents) {
+    return
+  }
+
+  let obj = JSON.stringify(contents)
+
+  let blob = new Blob([obj], { type: 'application/json' })
+  let elem = document.createElement('a')
+  elem.href = URL.createObjectURL(blob)
+
+  elem.download = 'karaoke.json'
+  document.body.appendChild(elem)
+  elem.click()
+  document.body.removeChild(elem)
 }
 
 const EditorReducer = (
@@ -258,6 +293,9 @@ const EditorReducer = (
           sync: action.data
         }
       })
+    case '@llct-editor/editor/requestDownload':
+      downloadHandler(state.contents)
+      return state
     default:
       return state
   }

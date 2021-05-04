@@ -4,6 +4,7 @@ import { useEffect } from 'react'
 
 import SongChooseTab from '@/tabs/song-choose'
 import EditorTab from '@/tabs/editor'
+import DoneTab from '@/tabs/done'
 
 import '@/styles/tab.scss'
 
@@ -17,6 +18,11 @@ export const tabs = [
     id: 'editor',
     element: <EditorTab></EditorTab>,
     title: '가사 작성'
+  },
+  {
+    id: 'done',
+    element: <DoneTab></DoneTab>,
+    title: '완료'
   }
 ]
 

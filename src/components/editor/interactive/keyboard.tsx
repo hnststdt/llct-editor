@@ -25,8 +25,6 @@ const InteractiveEditorKeyboardComponent = ({
   ) => {
     let words = []
 
-    console.log(offset)
-
     for (let i = 0; i < selection.selected.length; i++) {
       let selected = selection.selected[i]
 

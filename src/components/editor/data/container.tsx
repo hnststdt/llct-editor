@@ -25,7 +25,7 @@ const EditorDataContainer = () => {
       return
     }
 
-    dispatch(updateContent(call.items))
+    dispatch(updateContent(call.items, true))
   }, [call])
 
   return <></>

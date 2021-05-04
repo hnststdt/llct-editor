@@ -19,16 +19,17 @@ interface LLCTCallWord {
   repeats?: number
 }
 
+interface LLCTCallMetadataFlags {
+  notPerformed?: boolean
+  notAccurate?: boolean
+  singAlong?: boolean
+}
+
 interface LLCTCallMetadata {
   editor?: {
     lastEdit?: number
   }
-  flags?: {
-    notPerformed?: boolean
-    notAccurate?: boolean
-    singAlong?: boolean
-    unfinished?: boolean
-  }
+  flags?: LLCTCallMetadataFlags
   blade?: {
     text?: string
     color?: string
