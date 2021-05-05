@@ -17,6 +17,8 @@ const EditorDataContainer = () => {
       return
     }
 
+    setUseLocalFile(false)
+
     let cache = caches.load(music.id)
     if (cache && cache.data) {
       let check = confirm(
@@ -26,6 +28,8 @@ const EditorDataContainer = () => {
 
       if (check) {
         dispatch(updateContent(cache.data, true))
+        setUseLocalFile(true)
+
         return
       }
     }
@@ -43,8 +47,6 @@ const EditorDataContainer = () => {
 
     dispatch(updateContent(call.items, true))
   }, [call])
-
-  useEffect(() => {})
 
   useEffect(() => {
     window.onbeforeunload = () => {

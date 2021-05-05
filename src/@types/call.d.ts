@@ -17,6 +17,7 @@ interface LLCTCallWord {
   end: number
   color?: string
   repeats?: number
+  ruby?: string
 }
 
 interface LLCTCallMetadataFlags {

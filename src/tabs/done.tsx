@@ -29,18 +29,15 @@ const DoneTab = () => {
 ${title}
 
 **기타 사항이 있으면 알려주세요.**
-`
 
-  const githubAttach =
-    '\n> 파일을 이 곳에 끌어다 놓거나 아래에서 파일을 선택해주세요. Github 이슈는 JSON 파일을 지원하지 않으니 .zip 파일로 압축해서 올려주세요. 감사합니다!'
-  const emailAttach =
-    '\n-- karaoke.json 파일을 포함하여 보내주세요. 감사합니다! --'
+> 파일을 이 곳에 끌어다 놓거나 아래에서 파일을 선택해주세요. Github 이슈는 JSON 파일을 지원하지 않으니 .zip 파일로 압축해서 올려주세요. 감사합니다!
+`
 
   const goToGithubIssue = () => {
     window.open(
       `https://github.com/So-chiru/llct-editor/issues/new?assignees=So-chiru&labels=call&title=${encodeURIComponent(
         '콜표 작업 : ' + title
-      )}&body=${encodeURIComponent(body + githubAttach)}`,
+      )}&body=${encodeURIComponent(body)}`,
       'about:blank'
     )
   }
@@ -58,15 +55,7 @@ ${title}
       <p>
         {' '}
         작업을 완료 했습니다. 작업된 파일을 받아{' '}
-        <a onClick={goToGithubIssue}>Github Issue</a>나{' '}
-        <a
-          href={`mailto:sochiru@sochiru.pw?subject=${encodeURIComponent(
-            '콜표 작업 : ' + title
-          )}&body=${encodeURIComponent(body + emailAttach)}`}
-        >
-          sochiru@sochiru.pw
-        </a>{' '}
-        메일로 보내주세요.
+        <a onClick={goToGithubIssue}>Github Issue</a>에 올려주세요.
       </p>
 
       <div className='button-group'>

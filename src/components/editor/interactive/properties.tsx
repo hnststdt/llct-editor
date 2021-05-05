@@ -128,6 +128,8 @@ const InteractiveEditorPropertiesComponent = ({
         선택된 {selection && selection.selected.length}개의 항목에 대한 옵션
       </p>
 
+      {/* <ButtonComponent text='' onChange={}></ButtonComponent> */}
+
       <div className='item'>
         <span>텍스트 : </span>
         <input
