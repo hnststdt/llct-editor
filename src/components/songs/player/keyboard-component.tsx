@@ -10,36 +10,42 @@ const PlayerKeyboardControllerComponent = () => {
     (state: RootState) => state.editor.player.instance
   )
 
+  const handler = (ev: KeyboardEvent) => {
+    if (
+      (ev.target as HTMLElement).tagName === 'TEXTAREA' ||
+      (ev.target as HTMLElement).tagName === 'INPUT'
+    ) {
+      return
+    }
+
+    let activated = false
+
+    if (ev.code === 'Space') {
+      dispatch(toggleState())
+
+      activated = true
+    } else if (ev.code === 'ArrowLeft') {
+      instance && instance.skipBackward(-0.3)
+
+      activated = true
+    } else if (ev.code === 'ArrowRight') {
+      instance && instance.skipForward(0.3)
+
+      activated = true
+    }
+
+    if (activated) {
+      ev.preventDefault()
+    }
+  }
+
   useEffect(() => {
-    window.addEventListener('keydown', ev => {
-      if (
-        (ev.target as HTMLElement).tagName === 'TEXTAREA' ||
-        (ev.target as HTMLElement).tagName === 'INPUT'
-      ) {
-        return
-      }
+    window.addEventListener('keydown', handler)
 
-      let activated = false
-
-      if (ev.code === 'Space') {
-        dispatch(toggleState())
-
-        activated = true
-      } else if (ev.code === 'ArrowLeft') {
-        dispatch(instance && instance.skipBackward(-0.3))
-
-        activated = true
-      } else if (ev.code === 'ArrowRight') {
-        dispatch(instance && instance.skipForward(0.3))
-
-        activated = true
-      }
-
-      if (activated) {
-        ev.preventDefault()
-      }
-    })
-  }, [])
+    return () => {
+      window.removeEventListener('keydown', handler)
+    }
+  }, [instance])
 
   return <></>
 }

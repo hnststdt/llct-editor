@@ -20,11 +20,8 @@ const PlayerComponent = ({ audioSrc }: PlayerComponentProps) => {
   const [initialized, setInitialized] = useState<boolean>(false)
   const mode = useSelector((state: RootState) => state.editor.mode)
 
-  /**
-   * 플레이어 ref가 지정될 때 실행, WaveSurfer 초기화
-   */
   useEffect(() => {
-    if (!ref.current || player.instance) {
+    if (!ref.current) {
       return
     }
 
@@ -33,11 +30,18 @@ const PlayerComponent = ({ audioSrc }: PlayerComponentProps) => {
     })
 
     wave.on('ready', () => {
-      setLoaded(true)
+      if (wave) {
+        setLoaded(true)
+      }
     })
-
     dispatch(setInstance(wave))
-  }, [ref.current])
+
+    return () => {
+      if (player.instance && player.instance.isReady) {
+        player.instance.destroy()
+      }
+    }
+  }, [])
 
   useEffect(() => {
     if (!player.sync || !player.instance || initialized) {

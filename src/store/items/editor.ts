@@ -4,6 +4,7 @@ import {
   EditorType
 } from '@/@types/editor-mode'
 import { PlayingState } from '@/@types/playing'
+import caches from '@/core/caches'
 import WorkHistory from '@/core/history'
 
 import EditorSelection from '@/core/selection'
@@ -14,6 +15,7 @@ import WaveSurfer from 'wavesurfer.js'
 interface EditorAction {
   type: string
   data: unknown
+  saveToCache?: boolean
 }
 
 interface EditorStateTypes {
@@ -62,8 +64,8 @@ export const setInstance = (instance: WaveSurfer) => {
   }
 }
 
-export const updateContent = (data: LLCTCall, noTimeUpdate?: boolean) => {
-  if (!noTimeUpdate) {
+export const updateContent = (data: LLCTCall, systemChanges?: boolean) => {
+  if (!systemChanges) {
     if (!data.metadata) {
       data.metadata = {}
     }
@@ -77,7 +79,8 @@ export const updateContent = (data: LLCTCall, noTimeUpdate?: boolean) => {
 
   return {
     type: '@llct-editor/editor/updateContent',
-    data: data
+    data,
+    saveToCache: !systemChanges
   }
 }
 
@@ -260,6 +263,10 @@ const EditorReducer = (
       })
     case '@llct-editor/editor/updateContent':
       return updateWrapper(state, action, (state, action) => {
+        if (state.music && action.saveToCache) {
+          caches.save(state.music && state.music.id, action.data as LLCTCall)
+        }
+
         return Object.assign({}, state, {
           contents: action.data
         })

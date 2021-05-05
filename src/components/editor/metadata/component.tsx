@@ -1,7 +1,9 @@
+import ButtonComponent from '@/components/elements/button'
 import { RootState } from '@/store'
 import { setOffset, updateContent } from '@/store/items/editor'
 import '@/styles/editor/metadata.scss'
-import React, { useState } from 'react'
+import { read } from 'fs/promises'
+import React, { ChangeEvent, useState } from 'react'
 
 import { ChromePicker, ColorChangeHandler } from 'react-color'
 import { useDispatch, useSelector } from 'react-redux'
@@ -41,9 +43,9 @@ const MetadataEditorComponent = () => {
   const contents = useSelector((state: RootState) => state.editor.contents)
   const offset = useSelector((state: RootState) => state.editor.offset)
 
-  const [localColor, setLocalColor] = useState<string>()
+  const [onDrag, setOnDrag] = useState<boolean>(false)
 
-  const update = () => {}
+  const [localColor, setLocalColor] = useState<string>()
 
   const colorChange: ColorChangeHandler = color => {
     setLocalColor(color.hex)
@@ -106,12 +108,161 @@ const MetadataEditorComponent = () => {
     dispatch(updateContent(content))
   }
 
+  const fileLoadHandler = (file: File) => {
+    if (file.type !== 'application/json') {
+      alert(
+        '선택한 파일은 콜표 파일이 아닙니다. JSON 타입의 파일을 선택해주세요.'
+      )
+
+      return
+    }
+
+    if (!file.size) {
+      alert('파일이 비어 있어요.')
+
+      return
+    }
+
+    if (file.size > 1000000) {
+      alert('파일이 1MB가 넘는데, 제대로 된 파일이 맞나요?')
+
+      return
+    }
+
+    const reader = new FileReader()
+    reader.readAsText(file)
+    reader.onload = () => {
+      let data
+
+      if (!reader.result) {
+        return
+      }
+
+      let preData = reader.result
+
+      if (preData instanceof ArrayBuffer) {
+        preData = String.fromCharCode.apply(
+          null,
+          (new Uint16Array(preData) as unknown) as number[]
+        )
+      }
+
+      try {
+        data = JSON.parse(preData)
+      } catch (e) {
+        alert('올바른 데이터 파일이 아닙니다. ' + e.message)
+
+        return
+      }
+
+      if (!data.timeline || !data.metadata) {
+        alert('파일이 올바르지 않습니다. 콜표 파일이 맞나요?')
+
+        return
+      }
+
+      dispatch(updateContent(data, true))
+
+      alert('파일을 불러왔습니다.')
+    }
+  }
+
+  const loadFileButton = () => {
+    const fileInput = document.createElement('input')
+    fileInput.type = 'file'
+
+    document.body.appendChild(fileInput)
+
+    fileInput.click()
+    fileInput.onchange = (ev: Event) => {
+      if (!ev.target) {
+        return
+      }
+
+      let files = (ev.target as HTMLInputElement).files
+
+      if (!files) {
+        return
+      }
+
+      fileLoadHandler(files[0])
+    }
+
+    document.body.removeChild(fileInput)
+  }
+
   const color =
     localColor ||
     (contents && contents.metadata.blade && contents.metadata.blade.color)
 
+  const dragstart = (ev: React.DragEvent<HTMLDivElement>) => {
+    setOnDrag(true)
+
+    ev.stopPropagation()
+    ev.preventDefault()
+  }
+
+  const dragover = (ev: React.DragEvent<HTMLDivElement>) => {
+    ev.stopPropagation()
+    ev.preventDefault()
+  }
+
+  const dragend = (ev: React.DragEvent<HTMLDivElement>) => {
+    setOnDrag(false)
+
+    ev.stopPropagation()
+    ev.preventDefault()
+  }
+
+  const drop: React.DragEventHandler = ev => {
+    setOnDrag(false)
+
+    const dt = ev.dataTransfer
+    const files = dt.files
+
+    if (files) {
+      fileLoadHandler(files[0])
+    }
+
+    ev.stopPropagation()
+    ev.preventDefault()
+  }
+
   return (
-    <div className='metadata-editor'>
+    <div
+      className='metadata-editor'
+      onDragEnter={dragstart}
+      onDragOver={dragover}
+      onDragEnd={dragend}
+      onDrop={drop}
+    >
+      <div
+        className={['full-drop', onDrag ? 'show' : false]
+          .filter(v => v !== false)
+          .join(' ')}
+      >
+        <h3>이 곳에 파일을 끌어다 놓아 파일을 불러올 수 있습니다.</h3>
+      </div>
+      <div className='section'>
+        <h3>작업 내역</h3>
+        <div className='item'>
+          마지막 수정 시각 :{' '}
+          <span>
+            {new Date(
+              (contents &&
+                contents.metadata &&
+                contents.metadata.editor &&
+                contents.metadata.editor.lastEdit) ||
+                0
+            ).toString()}
+          </span>
+        </div>
+
+        <ButtonComponent
+          text='파일 불러오기'
+          onClick={loadFileButton}
+        ></ButtonComponent>
+      </div>
       <div className='section'>
         <h3>색상</h3>
 
@@ -169,18 +320,6 @@ const MetadataEditorComponent = () => {
       </div>
       <div className='section'>
         <h3>에디터 설정</h3>
-        <div className='item'>
-          마지막 수정 시각 :{' '}
-          <span>
-            {new Date(
-              (contents &&
-                contents.metadata &&
-                contents.metadata.editor &&
-                contents.metadata.editor.lastEdit) ||
-                0
-            ).toString()}
-          </span>
-        </div>
         <div className='item'>
           단축키 (S, W, [, ]) 오프셋 (tick)
           <input

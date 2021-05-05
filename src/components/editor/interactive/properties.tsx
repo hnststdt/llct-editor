@@ -218,6 +218,7 @@ const InteractiveEditorPropertiesComponent = ({
           type='number'
           placeholder={repeatV[0] as string | undefined}
           defaultValue={repeatV[1] as string | undefined}
+          onChange={ev => updateValue('repeats', ev.target)}
         ></input>
 
         <BeatCounterComponent></BeatCounterComponent>

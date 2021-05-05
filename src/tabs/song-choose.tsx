@@ -28,7 +28,7 @@ const SongChooseTab = () => {
   return (
     <div className='tab'>
       <div className='title'>
-        <h1>1. 곡 선택</h1>
+        <h1>곡 선택</h1>
         <p>콜표를 작성할 곡을 선택하세요.</p>
       </div>
       <SongsListContainer onClick={click}></SongsListContainer>

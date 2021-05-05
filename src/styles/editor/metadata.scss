@@ -1,4 +1,29 @@
 .metadata-editor {
+  width: 100%;
+
+  .full-drop {
+    display: flex;
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background: rgba(255, 255, 255, 0.3);
+    border-radius: 13.3px;
+    pointer-events: none;
+
+    visibility: hidden;
+    opacity: 0;
+
+    &.show {
+      visibility: visible;
+      opacity: 1;
+    }
+
+    & > * {
+      margin: auto;
+    }
+
+    font-size: 23px;
+  }
   input[type='number'],
   input[type='text'] {
     background: transparent;
