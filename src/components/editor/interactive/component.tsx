@@ -308,6 +308,12 @@ const InteractiveEditorComponent = ({
           </div>
         )
       })}
+      {!lines.length && (
+        <p>
+          아무런 텍스트가 없습니다. 오른쪽 위 일반 편집기 버튼을 눌러 텍스트
+          편집기로 전환한 후 콜표 텍스트를 작성하세요.
+        </p>
+      )}
     </div>
   )
 }
