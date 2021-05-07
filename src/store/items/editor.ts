@@ -9,6 +9,7 @@ import WorkHistory from '@/core/history'
 
 import EditorSelection from '@/core/selection'
 import CallTimeSync from '@/core/timesync'
+import calls from '@/utils/call'
 
 import WaveSurfer from 'wavesurfer.js'
 
@@ -64,8 +65,8 @@ export const setInstance = (instance: WaveSurfer) => {
   }
 }
 
-export const updateContent = (data: LLCTCall, systemChanges?: boolean) => {
-  if (!systemChanges) {
+const updatePreHandler = (data: LLCTCall, saveToCache?: boolean) => {
+  if (saveToCache) {
     if (!data.metadata) {
       data.metadata = {}
     }
@@ -77,10 +78,23 @@ export const updateContent = (data: LLCTCall, systemChanges?: boolean) => {
     data.metadata.editor.lastEdit = Date.now()
   }
 
+  data = calls.correctLineStartEndTime(data)
+
+  return data
+}
+
+export const updateContent = (data: LLCTCall, systemChanges?: boolean) => {
   return {
     type: '@llct-editor/editor/updateContent',
     data,
     saveToCache: !systemChanges
+  }
+}
+
+export const updateWordsContents = (words: WordsUpdates[]) => {
+  return {
+    type: '@llct-editor/editor/updateWords',
+    data: words
   }
 }
 
@@ -174,6 +188,8 @@ const removeWordsHandler = (
     })
     .filter((v: LLCTCallLine | null) => v !== null)
 
+  updatePreHandler(contents, action.saveToCache)
+
   return Object.assign({}, state, {
     contents
   })
@@ -218,10 +234,40 @@ const downloadHandler = (contents: LLCTCall | undefined) => {
   let elem = document.createElement('a')
   elem.href = URL.createObjectURL(blob)
 
-  elem.download = 'karaoke.json'
+  elem.download = 'karaoke-' + new Date().toISOString() + '.json'
   document.body.appendChild(elem)
   elem.click()
   document.body.removeChild(elem)
+}
+
+const updateWordsHandler = (
+  state: typeof EditorDefaults,
+  action: EditorAction
+): EditorStateTypes => {
+  if (!state.contents || !state.contents.timeline) {
+    return state
+  }
+
+  let contents = Object.assign({}, state.contents)
+  let words = action.data as WordsUpdates[]
+
+  for (let i = 0; i < words.length; i++) {
+    let updates = words[i]
+
+    for (let d = 0; d < updates.datas.length; d++) {
+      let data = updates.datas[d]
+      contents.timeline[updates.line].words[updates.word][
+        data.type
+      ] = data.data as never
+    }
+  }
+
+  updatePreHandler(contents, action.saveToCache)
+
+  return {
+    ...state,
+    contents
+  }
 }
 
 const EditorReducer = (
@@ -263,6 +309,8 @@ const EditorReducer = (
       })
     case '@llct-editor/editor/updateContent':
       return updateWrapper(state, action, (state, action) => {
+        updatePreHandler(action.data as LLCTCall, action.saveToCache)
+
         if (state.music && action.saveToCache) {
           caches.save(state.music && state.music.id, action.data as LLCTCall)
         }
@@ -271,6 +319,8 @@ const EditorReducer = (
           contents: action.data
         })
       })
+    case '@llct-editor/editor/updateWords':
+      return updateWrapper(state, action, updateWordsHandler)
     case '@llct-editor/editor/removeWords':
       return updateWrapper(state, action, removeWordsHandler)
     case '@llct-editor/editor/undo':

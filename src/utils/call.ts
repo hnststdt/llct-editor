@@ -111,3 +111,46 @@ export const renderText = (text: string): LLCTCall => {
     timeline
   }
 }
+
+const LINE_OFFSET = 100
+
+export const correctLineStartEndTime = (call: LLCTCall) => {
+  if (!call || !call.timeline || !call.timeline.length) {
+    return call
+  }
+
+  for (let lineIndex = 0; lineIndex < call.timeline.length; lineIndex++) {
+    let line = call.timeline[lineIndex]
+
+    if (!line.words || !line.words.length) {
+      continue
+    }
+
+    let start = line.words[0].start - LINE_OFFSET
+    let end = line.words[line.words.length - 1].end + LINE_OFFSET
+
+    if (start === -100) {
+      start = 0
+    }
+
+    if (end === 100) {
+      end = 100
+    }
+
+    if (line.start !== start) {
+      line.start = start
+    }
+
+    if (line.end !== end) {
+      line.end = end
+    }
+  }
+
+  return call
+}
+
+export default {
+  toText,
+  renderText,
+  correctLineStartEndTime
+}

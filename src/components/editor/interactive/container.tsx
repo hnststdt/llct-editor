@@ -2,7 +2,7 @@ import { RootState } from '@/store'
 import { useDispatch, useSelector } from 'react-redux'
 import InteractiveEditorComponent from './component'
 
-import { updateContent } from '@/store/items/editor'
+import { updateContent, updateWordsContents } from '@/store/items/editor'
 import InteractiveEditorKeyboardComponent from './keyboard'
 import InteractiveEditorPropertiesComponent from './properties'
 
@@ -72,24 +72,7 @@ const InteractiveEditorContainer = ({}: EditorContainerProps) => {
   }
 
   const updateWords = (words: WordsUpdates[]) => {
-    if (!editorContent || !editorContent.timeline) {
-      return
-    }
-
-    let contents = Object.assign({}, editorContent)
-
-    for (let i = 0; i < words.length; i++) {
-      let updates = words[i]
-
-      for (let d = 0; d < updates.datas.length; d++) {
-        let data = updates.datas[d]
-        contents.timeline[updates.line].words[updates.word][
-          data.type
-        ] = data.data as never
-      }
-    }
-
-    dispatch(updateContent(contents))
+    dispatch(updateWordsContents(words))
   }
 
   return (

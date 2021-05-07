@@ -3,6 +3,7 @@ import { useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 
 import { removeWord, undo, redo } from '@/store/items/editor'
+import WaveSurfer from 'wavesurfer.js'
 
 interface InteractiveEditorKeyboardComponentProps {
   updateWords: (words: WordsUpdates[]) => void
@@ -20,6 +21,7 @@ const InteractiveEditorKeyboardComponent = ({
 
   const propertiesKeypressHandler = (
     type: keyof LLCTCallWord,
+    inst?: WaveSurfer,
     altKey?: boolean,
     shiftKey?: boolean
   ) => {
@@ -34,8 +36,7 @@ const InteractiveEditorKeyboardComponent = ({
         datas: [
           {
             type,
-            data:
-              instance && Math.floor(instance.getCurrentTime() * 100) + offset
+            data: inst && Math.floor(inst.getCurrentTime() * 100) + offset
           }
         ]
       }
@@ -92,13 +93,13 @@ const InteractiveEditorKeyboardComponent = ({
     } else if (ev.code === 'Escape') {
       selection.clear()
     } else if (ev.code === 'KeyS') {
-      propertiesKeypressHandler('start', ev.altKey, ev.shiftKey)
+      propertiesKeypressHandler('start', instance, ev.altKey, ev.shiftKey)
     } else if (ev.code === 'KeyW') {
-      propertiesKeypressHandler('end', ev.altKey, ev.shiftKey)
+      propertiesKeypressHandler('end', instance, ev.altKey, ev.shiftKey)
     } else if (ev.code === 'BracketLeft') {
-      propertiesKeypressHandler('start', true, false)
+      propertiesKeypressHandler('start', instance, true, false)
     } else if (ev.code === 'BracketRight') {
-      propertiesKeypressHandler('end', true, false)
+      propertiesKeypressHandler('end', instance, true, false)
     }
 
     if (activated) {
@@ -112,7 +113,7 @@ const InteractiveEditorKeyboardComponent = ({
     return () => {
       window.removeEventListener('keydown', keydownEvent)
     }
-  }, [offset])
+  }, [offset, instance])
 
   return <></>
 }
