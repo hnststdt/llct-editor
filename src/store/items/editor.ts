@@ -94,14 +94,16 @@ export const updateContent = (data: LLCTCall, systemChanges?: boolean) => {
 export const updateWordsContents = (words: WordsUpdates[]) => {
   return {
     type: '@llct-editor/editor/updateWords',
-    data: words
+    data: words,
+    saveToCache: true
   }
 }
 
 export const removeWord = (data: { line: number; word: number }[]) => {
   return {
     type: '@llct-editor/editor/removeWords',
-    data: data
+    data: data,
+    saveToCache: true
   }
 }
 
@@ -208,6 +210,10 @@ const updateWrapper = (
     histories.add((data.contents as unknown) as Record<string, unknown>)
   }
 
+  if (state.music && action.saveToCache) {
+    caches.save(state.music && state.music.id, data.contents as LLCTCall)
+  }
+
   return data
 }
 
@@ -310,10 +316,6 @@ const EditorReducer = (
     case '@llct-editor/editor/updateContent':
       return updateWrapper(state, action, (state, action) => {
         updatePreHandler(action.data as LLCTCall, action.saveToCache)
-
-        if (state.music && action.saveToCache) {
-          caches.save(state.music && state.music.id, action.data as LLCTCall)
-        }
 
         return Object.assign({}, state, {
           contents: action.data

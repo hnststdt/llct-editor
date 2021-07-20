@@ -135,9 +135,12 @@ const InteractiveEditorPropertiesComponent = ({
         <input
           type='text'
           placeholder={textV[0] as string | undefined}
-          defaultValue={textV[1] as string | undefined}
-          onKeyDown={ev =>
-            ev.code === 'Enter' &&
+          value={(textV[1] || '') as string | undefined}
+          // onKeyDown={ev =>
+          //   ev.code === 'Enter' &&
+          //   updateValue('text', ev.nativeEvent.target as HTMLInputElement)
+          // }
+          onChange={ev =>
             updateValue('text', ev.nativeEvent.target as HTMLInputElement)
           }
         ></input>
@@ -148,7 +151,7 @@ const InteractiveEditorPropertiesComponent = ({
         <input
           type='number'
           placeholder={startV[0] as string | undefined}
-          defaultValue={startV[1] as string | undefined}
+          value={(startV[1] || '') as string | undefined}
           onChange={ev => updateValue('start', ev.target)}
         ></input>
       </div>
@@ -158,7 +161,7 @@ const InteractiveEditorPropertiesComponent = ({
         <input
           type='number'
           placeholder={endV[0] as string | undefined}
-          defaultValue={endV[1] as string | undefined}
+          value={(endV[1] || '') as string | undefined}
           onChange={ev => updateValue('end', ev.target)}
         ></input>
       </div>
@@ -219,7 +222,7 @@ const InteractiveEditorPropertiesComponent = ({
         <input
           type='number'
           placeholder={repeatV[0] as string | undefined}
-          defaultValue={repeatV[1] as string | undefined}
+          value={(repeatV[1] || '') as string | undefined}
           onChange={ev => updateValue('repeats', ev.target)}
         ></input>
 

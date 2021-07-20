@@ -25,12 +25,12 @@ const InteractiveEditorKeyboardComponent = ({
     altKey?: boolean,
     shiftKey?: boolean
   ) => {
-    let words = []
+    const words = []
 
     for (let i = 0; i < selection.selected.length; i++) {
-      let selected = selection.selected[i]
+      const selected = selection.selected[i]
 
-      let item = {
+      const item = {
         line: selected.line,
         word: selected.word,
         datas: [
@@ -71,7 +71,7 @@ const InteractiveEditorKeyboardComponent = ({
       (ev.code === 'Backspace' || ev.code === 'Delete') &&
       selection.selected.length
     ) {
-      let conf = confirm(
+      const conf = confirm(
         `정말로 선택된 ${selection.selected.length}개의 단어를 제거할까요?`
       )
 
@@ -88,18 +88,25 @@ const InteractiveEditorKeyboardComponent = ({
       (ev.ctrlKey || ev.metaKey)
     ) {
       dispatch(redo())
+      activated = true
     } else if (ev.code === 'KeyZ' && (ev.ctrlKey || ev.metaKey)) {
       dispatch(undo())
+      activated = true
     } else if (ev.code === 'Escape') {
       selection.clear()
+      activated = true
     } else if (ev.code === 'KeyS') {
       propertiesKeypressHandler('start', instance, ev.altKey, ev.shiftKey)
+      activated = true
     } else if (ev.code === 'KeyW') {
       propertiesKeypressHandler('end', instance, ev.altKey, ev.shiftKey)
+      activated = true
     } else if (ev.code === 'BracketLeft') {
       propertiesKeypressHandler('start', instance, true, false)
+      activated = true
     } else if (ev.code === 'BracketRight') {
       propertiesKeypressHandler('end', instance, true, false)
+      activated = true
     }
 
     if (activated) {

@@ -6,9 +6,9 @@ import { updateContent, updateWordsContents } from '@/store/items/editor'
 import InteractiveEditorKeyboardComponent from './keyboard'
 import InteractiveEditorPropertiesComponent from './properties'
 
-interface EditorContainerProps {}
+// interface EditorContainerProps {}
 
-const InteractiveEditorContainer = ({}: EditorContainerProps) => {
+const InteractiveEditorContainer = () => {
   const dispatch = useDispatch()
   const editorContent = useSelector((state: RootState) => state.editor.contents)
   const editorSelectionMode = useSelector(
@@ -21,7 +21,7 @@ const InteractiveEditorContainer = ({}: EditorContainerProps) => {
       return
     }
 
-    let contents = Object.assign({}, editorContent)
+    const contents = Object.assign({}, editorContent)
 
     if (typeof wordIndex === 'undefined') {
       contents.timeline.splice(lineIndex, 0, {
@@ -51,7 +51,7 @@ const InteractiveEditorContainer = ({}: EditorContainerProps) => {
       return
     }
 
-    let contents = Object.assign({}, editorContent)
+    const contents = Object.assign({}, editorContent)
 
     contents.timeline[lineIndex].words.splice(wordIndex, 1)
 
@@ -59,7 +59,7 @@ const InteractiveEditorContainer = ({}: EditorContainerProps) => {
   }
 
   const clickWord = (lineIndex: number, wordIndex: number) => {
-    let index = selection.getIndex(lineIndex, wordIndex)
+    const index = selection.getIndex(lineIndex, wordIndex)
 
     if (index === -1) {
       selection.add({
