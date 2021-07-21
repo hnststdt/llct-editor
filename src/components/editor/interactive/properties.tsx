@@ -7,6 +7,7 @@ interface InteractiveEditorPropertiesComponentProps {
   lines: LLCTCallLine[]
   selection: EditorSelection
   updateWords: (words: WordsUpdates[]) => void
+  updateLines: (lines: LinesUpdates[]) => void
 }
 
 const diff = (args: number[]) => {
@@ -52,10 +53,39 @@ const BeatCounterComponent = () => {
   )
 }
 
+const useDebouncer = (
+  placeHolder: string | number,
+  defaultValue: string | number | undefined,
+  update: (value: string | number) => void
+): [
+  string | number,
+  string | number | undefined,
+  React.Dispatch<React.SetStateAction<string | number | undefined>>
+] => {
+  const [value, setValue] = useState<string | number | undefined>(defaultValue)
+
+  useEffect(() => {
+    const timeout = setTimeout(() => {
+      if (defaultValue === value || !value) {
+        return
+      }
+
+      update(value)
+    }, 150)
+
+    return () => {
+      clearTimeout(timeout)
+    }
+  }, [defaultValue, value])
+
+  return [placeHolder, value, setValue]
+}
+
 const InteractiveEditorPropertiesComponent = ({
   lines,
   selection,
-  updateWords
+  updateWords,
+  updateLines
 }: InteractiveEditorPropertiesComponentProps) => {
   const [_, update] = useState<number>(0)
 
@@ -65,24 +95,19 @@ const InteractiveEditorPropertiesComponent = ({
     })
   }, [])
 
-  const updateValue = (type: keyof LLCTCallWord, target: HTMLInputElement) => {
-    let words = []
+  const updateValue = (type: keyof LLCTCallWord, value: string | number) => {
+    const words = []
 
     for (let i = 0; i < selection.selected.length; i++) {
-      let selected = selection.selected[i]
+      const selected = selection.selected[i]
 
-      selected.line
-
-      let item = {
+      const item = {
         line: selected.line,
         word: selected.word,
         datas: [
           {
             type,
-            data:
-              type === 'color' || type === 'text'
-                ? target.value
-                : Number(target.value)
+            data: type === 'color' || type === 'text' ? value : Number(value)
           }
         ]
       }
@@ -93,21 +118,62 @@ const InteractiveEditorPropertiesComponent = ({
     updateWords(words)
   }
 
-  const getPlaceValue = (type: keyof LLCTCallWord) => {
-    let res = []
+  const updateLineValue = (type: 'text', value: string | number) => {
+    const lines: LinesUpdates[] = []
 
     for (let i = 0; i < selection.selected.length; i++) {
-      let selected = selection.selected[i]
+      const selected = selection.selected[i]
 
-      if (!lines[selected.line] || !lines[selected.line].words[selected.word]) {
+      if (lines.filter(v => v.line === selected.line).length) {
         continue
       }
 
-      let word = lines[selected.line].words[selected.word]
-      res.push(word[type])
+      const item = {
+        line: selected.line,
+        datas: [
+          {
+            type,
+            data: value
+          }
+        ]
+      }
+
+      lines.push(item)
     }
 
-    let data = res.filter((v, i, a) => a.indexOf(v) === i)
+    updateLines(lines)
+  }
+
+  const getPlaceValue = (
+    type: keyof LLCTCallWord,
+    lineOnly?: boolean
+  ): [string | number, string | number | undefined] => {
+    const res = []
+
+    for (let i = 0; i < selection.selected.length; i++) {
+      const selected = selection.selected[i]
+
+      if (
+        !lines[selected.line] ||
+        (!lineOnly && !lines[selected.line].words[selected.word])
+      ) {
+        continue
+      }
+
+      if (lineOnly) {
+        const line = lines[selected.line]
+        res.push(line[type as keyof LLCTCallLine])
+      } else {
+        const word = lines[selected.line].words[selected.word]
+        res.push(word[type as keyof LLCTCallWord])
+      }
+    }
+
+    const data = (res.filter((v, i, a) => a.indexOf(v) === i) as unknown) as (
+      | string
+      | number
+      | undefined
+    )[]
 
     if (data.length === 1) {
       return [data[0] || 'X', data[0]]
@@ -116,11 +182,29 @@ const InteractiveEditorPropertiesComponent = ({
     }
   }
 
-  const textV = getPlaceValue('text')
-  const startV = getPlaceValue('start')
-  const endV = getPlaceValue('end')
-  const typeV = getPlaceValue('type')
-  const repeatV = getPlaceValue('repeats')
+  const textV = useDebouncer(...getPlaceValue('text'), value => {
+    updateValue('text', value)
+  })
+
+  const startV = useDebouncer(...getPlaceValue('start'), value => {
+    updateValue('start', value)
+  })
+
+  const endV = useDebouncer(...getPlaceValue('end'), value => {
+    updateValue('end', value)
+  })
+
+  const typeV = useDebouncer(...getPlaceValue('type'), value => {
+    updateValue('type', value)
+  })
+
+  const repeatV = useDebouncer(...getPlaceValue('repeats'), value => {
+    updateValue('repeats', value)
+  })
+
+  const lineTextV = useDebouncer(...getPlaceValue('text', true), value => {
+    updateLineValue('text', value)
+  })
 
   return (
     <div className='interactive-properties'>
@@ -129,6 +213,24 @@ const InteractiveEditorPropertiesComponent = ({
       </p>
 
       {/* <ButtonComponent text='' onChange={}></ButtonComponent> */}
+      <h3>라인</h3>
+      <div className='item'>
+        <span>가사 : </span>
+        <input
+          type='text'
+          placeholder={lineTextV[0] as string | undefined}
+          value={(lineTextV[1] || '') as string | undefined}
+          // onKeyDown={ev =>
+          //   ev.code === 'Enter' &&
+          //   updateValue('text', ev.nativeEvent.target as HTMLInputElement)
+          // }
+          onChange={ev => lineTextV[2](ev.target.value)}
+        ></input>
+      </div>
+
+      <br></br>
+
+      <h3>단어</h3>
 
       <div className='item'>
         <span>텍스트 : </span>
@@ -140,9 +242,7 @@ const InteractiveEditorPropertiesComponent = ({
           //   ev.code === 'Enter' &&
           //   updateValue('text', ev.nativeEvent.target as HTMLInputElement)
           // }
-          onChange={ev =>
-            updateValue('text', ev.nativeEvent.target as HTMLInputElement)
-          }
+          onChange={ev => textV[2](ev.target.value)}
         ></input>
       </div>
 
@@ -152,7 +252,7 @@ const InteractiveEditorPropertiesComponent = ({
           type='number'
           placeholder={startV[0] as string | undefined}
           value={(startV[1] || '') as string | undefined}
-          onChange={ev => updateValue('start', ev.target)}
+          onChange={ev => startV[2](ev.target.value)}
         ></input>
       </div>
 
@@ -162,7 +262,7 @@ const InteractiveEditorPropertiesComponent = ({
           type='number'
           placeholder={endV[0] as string | undefined}
           value={(endV[1] || '') as string | undefined}
-          onChange={ev => updateValue('end', ev.target)}
+          onChange={ev => endV[2](ev.target.value)}
         ></input>
       </div>
 
@@ -176,7 +276,7 @@ const InteractiveEditorPropertiesComponent = ({
               id='call_type_zero'
               name='type'
               checked={typeV[1] === 0}
-              onChange={ev => updateValue('type', ev.target)}
+              onChange={ev => typeV[2](ev.target.value)}
               value='0'
             ></input>
             <label htmlFor='call_type_zero'>가사</label>
@@ -187,7 +287,7 @@ const InteractiveEditorPropertiesComponent = ({
               id='call_type_one'
               name='type'
               checked={typeV[1] === 1}
-              onChange={ev => updateValue('type', ev.target)}
+              onChange={ev => typeV[2](ev.target.value)}
               value='1'
             ></input>
             <label htmlFor='call_type_one'>콜</label>
@@ -198,7 +298,7 @@ const InteractiveEditorPropertiesComponent = ({
               id='call_type_two'
               name='type'
               checked={typeV[1] === 2}
-              onChange={ev => updateValue('type', ev.target)}
+              onChange={ev => typeV[2](ev.target.value)}
               value='2'
             ></input>
             <label htmlFor='call_type_two'>주석</label>
@@ -209,7 +309,7 @@ const InteractiveEditorPropertiesComponent = ({
               id='call_type_three'
               name='type'
               checked={typeV[1] === 3}
-              onChange={ev => updateValue('type', ev.target)}
+              onChange={ev => typeV[2](ev.target.value)}
               value='3'
             ></input>
             <label htmlFor='call_type_three'>가사 + 콜</label>
@@ -223,7 +323,7 @@ const InteractiveEditorPropertiesComponent = ({
           type='number'
           placeholder={repeatV[0] as string | undefined}
           value={(repeatV[1] || '') as string | undefined}
-          onChange={ev => updateValue('repeats', ev.target)}
+          onChange={ev => repeatV[2](ev.target.value)}
         ></input>
 
         <BeatCounterComponent></BeatCounterComponent>

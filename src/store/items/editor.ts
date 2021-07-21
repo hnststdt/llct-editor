@@ -99,6 +99,14 @@ export const updateWordsContents = (words: WordsUpdates[]) => {
   }
 }
 
+export const updateLinesContents = (lines: LinesUpdates[]) => {
+  return {
+    type: '@llct-editor/editor/updateLines',
+    data: lines,
+    saveToCache: true
+  }
+}
+
 export const removeWord = (data: { line: number; word: number }[]) => {
   return {
     type: '@llct-editor/editor/removeWords',
@@ -168,11 +176,11 @@ const removeWordsHandler = (
     return state
   }
 
-  let data = action.data as { line: number; word: number }[]
-  let contents = JSON.parse(JSON.stringify(state.contents))
+  const data = action.data as { line: number; word: number }[]
+  const contents = JSON.parse(JSON.stringify(state.contents))
 
   for (let i = 0; i < data.length; i++) {
-    let pos = data[i]
+    const pos = data[i]
     contents.timeline[pos.line].words[
       pos.word
     ] = (null as unknown) as LLCTCallWord
@@ -204,7 +212,7 @@ const updateWrapper = (
   action: EditorAction,
   func: (state: typeof EditorDefaults, action: EditorAction) => EditorStateTypes
 ) => {
-  let data = func(state, action)
+  const data = func(state, action)
 
   if (data.contents) {
     histories.add((data.contents as unknown) as Record<string, unknown>)
@@ -234,10 +242,10 @@ const downloadHandler = (contents: LLCTCall | undefined) => {
     return
   }
 
-  let obj = JSON.stringify(contents)
+  const obj = JSON.stringify(contents)
 
-  let blob = new Blob([obj], { type: 'application/json' })
-  let elem = document.createElement('a')
+  const blob = new Blob([obj], { type: 'application/json' })
+  const elem = document.createElement('a')
   elem.href = URL.createObjectURL(blob)
 
   elem.download = 'karaoke-' + new Date().toISOString() + '.json'
@@ -254,15 +262,45 @@ const updateWordsHandler = (
     return state
   }
 
-  let contents = Object.assign({}, state.contents)
-  let words = action.data as WordsUpdates[]
+  const contents = Object.assign({}, state.contents)
+  const words = action.data as WordsUpdates[]
 
   for (let i = 0; i < words.length; i++) {
-    let updates = words[i]
+    const updates = words[i]
 
     for (let d = 0; d < updates.datas.length; d++) {
-      let data = updates.datas[d]
+      const data = updates.datas[d]
       contents.timeline[updates.line].words[updates.word][
+        data.type
+      ] = data.data as never
+    }
+  }
+
+  updatePreHandler(contents, action.saveToCache)
+
+  return {
+    ...state,
+    contents
+  }
+}
+
+const updateLinesHandler = (
+  state: typeof EditorDefaults,
+  action: EditorAction
+): EditorStateTypes => {
+  if (!state.contents || !state.contents.timeline) {
+    return state
+  }
+
+  const contents = Object.assign({}, state.contents)
+  const lines = action.data as LinesUpdates[]
+
+  for (let i = 0; i < lines.length; i++) {
+    const updates = lines[i]
+
+    for (let d = 0; d < updates.datas.length; d++) {
+      const data = updates.datas[d]
+      contents.timeline[updates.line][
         data.type
       ] = data.data as never
     }
@@ -323,6 +361,8 @@ const EditorReducer = (
       })
     case '@llct-editor/editor/updateWords':
       return updateWrapper(state, action, updateWordsHandler)
+    case '@llct-editor/editor/updateLines':
+      return updateWrapper(state, action, updateLinesHandler)
     case '@llct-editor/editor/removeWords':
       return updateWrapper(state, action, removeWordsHandler)
     case '@llct-editor/editor/undo':
