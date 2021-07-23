@@ -20,6 +20,70 @@ const diff = (args: number[]) => {
   )
 }
 
+interface MoveSyncComponentProps {
+  lines: LLCTCallLine[]
+  amount: number
+  updateWords: (words: WordsUpdates[]) => void
+}
+
+const MoveSyncComponent = ({
+  lines,
+  amount,
+  updateWords
+}: MoveSyncComponentProps) => {
+  const syncAdjust = () => {
+    const result = []
+
+    for (let i = 0; i < lines.length; i++) {
+      const words = lines[i]
+
+      if (words.words.length === 1 && words.words[0].text === '') {
+        continue
+      }
+
+      for (let w = 0; w < words.words.length; w++) {
+        const word = words.words[w]
+
+        if (!word.start || !word.end || word.start < 0) {
+          continue
+        }
+
+        const start: WordsUpdates['datas'][0] = {
+          type: 'start',
+          data: Number(Math.max(0, word.start + amount))
+        }
+
+        const end: WordsUpdates['datas'][0] = {
+          type: 'end',
+          data: Number(Math.max(0, word.end + amount))
+        }
+
+        const item: WordsUpdates = {
+          line: i,
+          word: w,
+          datas: [start, end]
+        }
+
+        result.push(item)
+      }
+    }
+
+    updateWords(result)
+  }
+
+  return (
+    <ButtonComponent
+      text={
+        '가사 싱크를 ' +
+        Math.abs(amount) +
+        'tc ' +
+        (amount < 0 ? ' 빠르게' : ' 느리게')
+      }
+      onClick={syncAdjust}
+    ></ButtonComponent>
+  )
+}
+
 const BeatCounterComponent = () => {
   const [lists, updateLists] = useState<number[]>([])
   const timerRef = useRef<number>(0)
@@ -365,6 +429,20 @@ const InteractiveEditorPropertiesComponent = ({
         ></input>
 
         <BeatCounterComponent></BeatCounterComponent>
+      </div>
+
+      <br></br>
+      <div className='item'>
+        <MoveSyncComponent
+          lines={lines}
+          amount={-100}
+          updateWords={updateWords}
+        ></MoveSyncComponent>
+        <MoveSyncComponent
+          lines={lines}
+          amount={100}
+          updateWords={updateWords}
+        ></MoveSyncComponent>
       </div>
     </div>
   )
