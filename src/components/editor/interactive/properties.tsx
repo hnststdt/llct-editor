@@ -56,7 +56,8 @@ const BeatCounterComponent = () => {
 const useDebouncer = (
   placeHolder: string | number,
   defaultValue: string | number | undefined,
-  update: (value: string | number) => void
+  update: (value: string | number) => void,
+  selection: unknown
 ): [
   string | number,
   string | number | undefined,
@@ -65,13 +66,17 @@ const useDebouncer = (
   const [value, setValue] = useState<string | number | undefined>(defaultValue)
 
   useEffect(() => {
+    setValue(undefined)
+  }, [selection])
+
+  useEffect(() => {
     const timeout = setTimeout(() => {
       if (defaultValue === value || !value) {
         return
       }
 
       update(value)
-    }, 150)
+    }, 300)
 
     return () => {
       clearTimeout(timeout)
@@ -182,29 +187,53 @@ const InteractiveEditorPropertiesComponent = ({
     }
   }
 
-  const textV = useDebouncer(...getPlaceValue('text'), value => {
-    updateValue('text', value)
-  })
+  const textV = useDebouncer(
+    ...getPlaceValue('text'),
+    value => {
+      updateValue('text', value)
+    },
+    _
+  )
 
-  const startV = useDebouncer(...getPlaceValue('start'), value => {
-    updateValue('start', value)
-  })
+  const startV = useDebouncer(
+    ...getPlaceValue('start'),
+    value => {
+      updateValue('start', value)
+    },
+    _
+  )
 
-  const endV = useDebouncer(...getPlaceValue('end'), value => {
-    updateValue('end', value)
-  })
+  const endV = useDebouncer(
+    ...getPlaceValue('end'),
+    value => {
+      updateValue('end', value)
+    },
+    _
+  )
 
-  const typeV = useDebouncer(...getPlaceValue('type'), value => {
-    updateValue('type', value)
-  })
+  const typeV = useDebouncer(
+    ...getPlaceValue('type'),
+    value => {
+      updateValue('type', value)
+    },
+    _
+  )
 
-  const repeatV = useDebouncer(...getPlaceValue('repeats'), value => {
-    updateValue('repeats', value)
-  })
+  const repeatV = useDebouncer(
+    ...getPlaceValue('repeats'),
+    value => {
+      updateValue('repeats', value)
+    },
+    _
+  )
 
-  const lineTextV = useDebouncer(...getPlaceValue('text', true), value => {
-    updateLineValue('text', value)
-  })
+  const lineTextV = useDebouncer(
+    ...getPlaceValue('text', true),
+    value => {
+      updateLineValue('text', value)
+    },
+    _
+  )
 
   return (
     <div className='interactive-properties'>
@@ -219,6 +248,7 @@ const InteractiveEditorPropertiesComponent = ({
         <input
           type='text'
           placeholder={lineTextV[0] as string | undefined}
+          disabled={!selection || !selection.selected.length}
           value={(lineTextV[1] || '') as string | undefined}
           // onKeyDown={ev =>
           //   ev.code === 'Enter' &&
@@ -236,6 +266,7 @@ const InteractiveEditorPropertiesComponent = ({
         <span>텍스트 : </span>
         <input
           type='text'
+          disabled={!selection || !selection.selected.length}
           placeholder={textV[0] as string | undefined}
           value={(textV[1] || '') as string | undefined}
           // onKeyDown={ev =>
@@ -250,6 +281,7 @@ const InteractiveEditorPropertiesComponent = ({
         <span>시작 시간 : </span>
         <input
           type='number'
+          disabled={!selection || !selection.selected.length}
           placeholder={startV[0] as string | undefined}
           value={(startV[1] || '') as string | undefined}
           onChange={ev => startV[2](ev.target.value)}
@@ -260,6 +292,7 @@ const InteractiveEditorPropertiesComponent = ({
         <span>종료 시간 : </span>
         <input
           type='number'
+          disabled={!selection || !selection.selected.length}
           placeholder={endV[0] as string | undefined}
           value={(endV[1] || '') as string | undefined}
           onChange={ev => endV[2](ev.target.value)}
@@ -273,6 +306,7 @@ const InteractiveEditorPropertiesComponent = ({
           <div className='radio lyrics'>
             <input
               type='radio'
+              disabled={!selection || !selection.selected.length}
               id='call_type_zero'
               name='type'
               checked={typeV[1] === 0}
@@ -284,6 +318,7 @@ const InteractiveEditorPropertiesComponent = ({
           <div className='radio call'>
             <input
               type='radio'
+              disabled={!selection || !selection.selected.length}
               id='call_type_one'
               name='type'
               checked={typeV[1] === 1}
@@ -295,6 +330,7 @@ const InteractiveEditorPropertiesComponent = ({
           <div className='radio comment'>
             <input
               type='radio'
+              disabled={!selection || !selection.selected.length}
               id='call_type_two'
               name='type'
               checked={typeV[1] === 2}
@@ -306,6 +342,7 @@ const InteractiveEditorPropertiesComponent = ({
           <div className='radio calllyrics'>
             <input
               type='radio'
+              disabled={!selection || !selection.selected.length}
               id='call_type_three'
               name='type'
               checked={typeV[1] === 3}
@@ -321,6 +358,7 @@ const InteractiveEditorPropertiesComponent = ({
         <span>반복 시간 : </span>
         <input
           type='number'
+          disabled={!selection || !selection.selected.length}
           placeholder={repeatV[0] as string | undefined}
           value={(repeatV[1] || '') as string | undefined}
           onChange={ev => repeatV[2](ev.target.value)}
