@@ -1,6 +1,6 @@
 import PlayerContainer from '@/components/songs/player/container'
 
-import { MdPlayArrow, MdPause, MdAdd } from 'react-icons/md'
+import { MdPlayArrow, MdPause, MdAdd, MdHelp } from 'react-icons/md'
 import { RiCursorFill } from 'react-icons/ri'
 
 import { useDispatch, useSelector } from 'react-redux'
@@ -118,6 +118,13 @@ const EditorTab = () => {
     )
   }
 
+  const openHelpPage = () => {
+    window.open(
+      'https://llct.notion.site/385adb149c2c488dbc4ca1c77d9577f9',
+      '_blank'
+    )
+  }
+
   return (
     <div className='tab'>
       <div className='title-zone'>
@@ -125,6 +132,9 @@ const EditorTab = () => {
           편집기 <span className='mute'>{music && music.title}</span>
         </h1>
         <div className='control-zone'>
+          <ButtonComponent onClick={openHelpPage}>
+            <MdHelp></MdHelp> 도움말
+          </ButtonComponent>
           <ButtonComponent onClick={selectEditorMode}>
             {modeText[mode]}
           </ButtonComponent>
