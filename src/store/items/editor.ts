@@ -7,7 +7,7 @@ import { PlayingState } from '@/@types/playing'
 import caches from '@/core/caches'
 import WorkHistory from '@/core/history'
 
-import EditorSelection from '@/core/selection'
+import EditorSelection, { EditorSelected } from '@/core/selection'
 import CallTimeSync from '@/core/timesync'
 import calls from '@/utils/call'
 
@@ -156,6 +156,14 @@ export const undo = () => {
   }
 }
 
+export const mergeWords = (words: EditorSelected[]) => {
+  return {
+    type: '@llct-editor/editor/mergeWords',
+    data: words,
+    saveToCache: true
+  }
+}
+
 export const redo = () => {
   return {
     type: '@llct-editor/editor/redo'
@@ -284,6 +292,49 @@ const updateWordsHandler = (
   }
 }
 
+const mergeWordsHandler = (
+  state: typeof EditorDefaults,
+  action: EditorAction
+): EditorStateTypes => {
+  if (!state.contents || !state.contents.timeline) {
+    return state
+  }
+
+  let contents = Object.assign({}, state.contents)
+  const words = action.data as EditorSelected[]
+
+  let texts = ''
+  for (let i = 0; i < words.length; i++) {
+    const updates = words[i]
+    if (i == 0) {
+      continue
+    }
+
+    texts += contents.timeline[updates.line].words[updates.word].text
+
+    contents = removeWordsHandler(state, {
+      type: '',
+      data: [
+        {
+          line: updates.line,
+          word: updates.word
+        }
+      ]
+    }).contents!
+  }
+
+  if (words.length) {
+    contents.timeline[words[0].line].words[words[0].word].text += texts
+  }
+
+  updatePreHandler(contents, action.saveToCache)
+
+  return {
+    ...state,
+    contents
+  }
+}
+
 const updateLinesHandler = (
   state: typeof EditorDefaults,
   action: EditorAction
@@ -300,9 +351,7 @@ const updateLinesHandler = (
 
     for (let d = 0; d < updates.datas.length; d++) {
       const data = updates.datas[d]
-      contents.timeline[updates.line][
-        data.type
-      ] = data.data as never
+      contents.timeline[updates.line][data.type] = data.data as never
     }
   }
 
@@ -361,6 +410,8 @@ const EditorReducer = (
       })
     case '@llct-editor/editor/updateWords':
       return updateWrapper(state, action, updateWordsHandler)
+    case '@llct-editor/editor/mergeWords':
+      return updateWrapper(state, action, mergeWordsHandler)
     case '@llct-editor/editor/updateLines':
       return updateWrapper(state, action, updateLinesHandler)
     case '@llct-editor/editor/removeWords':

@@ -165,7 +165,7 @@ const WordsCollectionComponent = ({
   const [_, update] = useState<number>(0)
 
   useEffect(() => {
-    let id = selection.events.on('update', (l: number, w: number) => {
+    const id = selection.events.on('update', (l: number, w: number) => {
       if (
         l === lineIndex ||
         (typeof l === 'undefined' && typeof w === 'undefined')
@@ -182,7 +182,7 @@ const WordsCollectionComponent = ({
   }, [])
 
   const wordMouseOver = (ev: React.MouseEvent<HTMLDivElement>) => {
-    let elem = parentTraversal(ev.target as HTMLElement, 3).filter(elem =>
+    const elem = parentTraversal(ev.target as HTMLElement, 3).filter(elem =>
       elem.classList.contains('word')
     )[0]
 
@@ -300,7 +300,7 @@ const InteractiveEditorComponent = ({
             </div>
             <WordsCollectionComponent
               line={line}
-              key={lineIndex}
+              key={'words' + lineIndex}
               lineIndex={lineIndex}
               addWord={addWord}
               clickWord={clickWord}

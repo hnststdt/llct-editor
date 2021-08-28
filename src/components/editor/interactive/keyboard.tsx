@@ -2,7 +2,7 @@ import { RootState } from '@/store'
 import { useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 
-import { removeWord, undo, redo } from '@/store/items/editor'
+import { removeWord, mergeWords, undo, redo } from '@/store/items/editor'
 import WaveSurfer from 'wavesurfer.js'
 
 interface InteractiveEditorKeyboardComponentProps {
@@ -91,6 +91,10 @@ const InteractiveEditorKeyboardComponent = ({
       activated = true
     } else if (ev.code === 'KeyZ' && (ev.ctrlKey || ev.metaKey)) {
       dispatch(undo())
+      activated = true
+    } else if (ev.code === 'KeyD' && ev.altKey) {
+      dispatch(mergeWords(selection.selected))
+      selection.clear()
       activated = true
     } else if (ev.code === 'Escape') {
       selection.clear()

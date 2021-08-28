@@ -1,6 +1,6 @@
 import eventBus from './eventbus'
 
-interface EditorSelected {
+export interface EditorSelected {
   line: number
   word: number
 }
@@ -35,7 +35,7 @@ export default class EditorSelection {
   }
 
   add (item: EditorSelected) {
-    let index = this.selected.push(item)
+    const index = this.selected.push(item)
 
     this.events.runAll('update', item.line, item.word)
 

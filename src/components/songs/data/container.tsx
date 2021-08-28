@@ -25,7 +25,7 @@ const SongsDataContainer = () => {
       return
     }
 
-    let id = new URL(window.location.href).searchParams.get('id')
+    const id = new URL(window.location.href).searchParams.get('id')
 
     if (!id) {
       return
