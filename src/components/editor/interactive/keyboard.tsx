@@ -7,10 +7,12 @@ import WaveSurfer from 'wavesurfer.js'
 
 interface InteractiveEditorKeyboardComponentProps {
   updateWords: (words: WordsUpdates[]) => void
+  updateLines: (words: LinesUpdates[]) => void
 }
 
 const InteractiveEditorKeyboardComponent = ({
-  updateWords
+  updateWords,
+  updateLines
 }: InteractiveEditorKeyboardComponentProps) => {
   const dispatch = useDispatch()
   const instance = useSelector(
@@ -19,7 +21,47 @@ const InteractiveEditorKeyboardComponent = ({
   const selection = useSelector((state: RootState) => state.editor.selection)
   const offset = useSelector((state: RootState) => state.editor.offset)
 
-  const propertiesKeypressHandler = (
+  const propertiesLineKeypressHandler = async (
+    type: keyof LLCTCallLine,
+    inst?: WaveSurfer,
+    altKey?: boolean,
+    shiftKey?: boolean
+  ) => {
+    const lines: LinesUpdates[] = []
+
+    for (let i = 0; i < selection.selected.length; i++) {
+      const selected = selection.selected[i]
+      if (lines.filter(line => line.line === selected.line).length > 0) {
+        continue
+      }
+
+      const item = {
+        line: selected.line,
+        word: selected.word,
+        datas: [
+          {
+            type,
+            data: await navigator.clipboard.readText()
+          }
+        ]
+      }
+
+      lines.push(item)
+
+      if (altKey) {
+        break
+      }
+    }
+    if (altKey) {
+      selection.remove(0)
+    } else if (shiftKey) {
+      selection.clear()
+    }
+
+    updateLines(lines)
+  }
+
+  const propertiesWordKeypressHandler = async (
     type: keyof LLCTCallWord,
     inst?: WaveSurfer,
     altKey?: boolean,
@@ -30,13 +72,21 @@ const InteractiveEditorKeyboardComponent = ({
     for (let i = 0; i < selection.selected.length; i++) {
       const selected = selection.selected[i]
 
+      let data: unknown = ''
+
+      if (type === 'start' || type === 'end') {
+        data = inst && Math.floor(inst.getCurrentTime() * 100) + offset
+      } else {
+        data = await navigator.clipboard.readText()
+      }
+
       const item = {
         line: selected.line,
         word: selected.word,
         datas: [
           {
             type,
-            data: inst && Math.floor(inst.getCurrentTime() * 100) + offset
+            data
           }
         ]
       }
@@ -96,20 +146,24 @@ const InteractiveEditorKeyboardComponent = ({
       dispatch(mergeWords(selection.selected))
       selection.clear()
       activated = true
+    } else if (ev.code === 'KeyV' && (ev.metaKey || ev.ctrlKey)) {
+      propertiesLineKeypressHandler('text', instance)
+      selection.clear()
+      activated = true
     } else if (ev.code === 'Escape') {
       selection.clear()
       activated = true
     } else if (ev.code === 'KeyS') {
-      propertiesKeypressHandler('start', instance, ev.altKey, ev.shiftKey)
+      propertiesWordKeypressHandler('start', instance, ev.altKey, ev.shiftKey)
       activated = true
     } else if (ev.code === 'KeyW') {
-      propertiesKeypressHandler('end', instance, ev.altKey, ev.shiftKey)
+      propertiesWordKeypressHandler('end', instance, ev.altKey, ev.shiftKey)
       activated = true
     } else if (ev.code === 'BracketLeft') {
-      propertiesKeypressHandler('start', instance, true, false)
+      propertiesWordKeypressHandler('start', instance, true, false)
       activated = true
     } else if (ev.code === 'BracketRight') {
-      propertiesKeypressHandler('end', instance, true, false)
+      propertiesWordKeypressHandler('end', instance, true, false)
       activated = true
     }
 

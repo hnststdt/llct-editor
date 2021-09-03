@@ -87,6 +87,7 @@ const InteractiveEditorContainer = () => {
     <>
       <InteractiveEditorKeyboardComponent
         updateWords={updateWords}
+        updateLines={updateLines}
       ></InteractiveEditorKeyboardComponent>
       <InteractiveEditorComponent
         lines={(editorContent && editorContent.timeline) || []}
