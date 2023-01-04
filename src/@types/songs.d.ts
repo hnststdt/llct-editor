@@ -10,8 +10,14 @@ interface LLCTSongDataV2 {
   songs?: MusicMetadata[][]
 }
 
+interface SongStreamingProvider {
+  spotify?: string
+  youtube?: string
+}
+
 interface MusicExtraMetadata {
   released?: number
+  streaming?: SongStreamingProvider
 }
 interface MusicMetadata {
   title: string
