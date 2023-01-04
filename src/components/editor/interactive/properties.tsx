@@ -1,4 +1,5 @@
 import ButtonComponent from '@/components/elements/button'
+import SelectComponent from '@/components/elements/select'
 import EditorSelection from '@/core/selection'
 import { useEffect, useRef, useState } from 'react'
 
@@ -299,6 +300,8 @@ const InteractiveEditorPropertiesComponent = ({
     _
   )
 
+  const [syncAmount, setSyncAmount] = useState(100)
+
   return (
     <div className='interactive-properties'>
       <p>
@@ -433,14 +436,20 @@ const InteractiveEditorPropertiesComponent = ({
 
       <br></br>
       <div className='item'>
+        <SelectComponent
+          prefix='조정 단위:'
+          items={['1', '10', '100']}
+          value='100'
+          onChange={(item)=>{setSyncAmount(Number(item))}}
+        />
         <MoveSyncComponent
           lines={lines}
-          amount={-100}
+          amount={-syncAmount}
           updateWords={updateWords}
         ></MoveSyncComponent>
         <MoveSyncComponent
           lines={lines}
-          amount={100}
+          amount={syncAmount}
           updateWords={updateWords}
         ></MoveSyncComponent>
       </div>
