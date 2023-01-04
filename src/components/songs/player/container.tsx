@@ -12,7 +12,7 @@ const PlayerContainer = () => {
     <>
       <PlayerKeyboardControllerComponent></PlayerKeyboardControllerComponent>
       <PlayerComponent
-        audioSrc={songs && utils.getAudioURL(songs)}
+        audioSrc={songs?.metadata?.streaming?.youtube && songs.metadata.streaming.youtube}
       ></PlayerComponent>
     </>
   )

@@ -11,7 +11,7 @@ import EditorSelection, { EditorSelected } from '@/core/selection'
 import CallTimeSync from '@/core/timesync'
 import calls from '@/utils/call'
 
-import WaveSurfer from 'wavesurfer.js'
+import {YouTubePlayer} from 'react-youtube'
 
 interface EditorAction {
   type: string
@@ -23,7 +23,7 @@ interface EditorStateTypes {
   music?: MusicMetadataWithID
   player: {
     state: PlayingState
-    instance?: WaveSurfer
+    instance?: YouTubePlayer
     sync?: CallTimeSync
   }
   contents?: LLCTCall
@@ -58,10 +58,17 @@ export const toggleState = () => {
   }
 }
 
-export const setInstance = (instance: WaveSurfer) => {
+export const setInstance = (instance: YouTubePlayer) => {
   return {
     type: '@llct-editor/editor/setInstance',
     data: instance
+  }
+}
+
+export const clearInstance = () => {
+  return {
+    type: '@llct-editor/editor/setInstance',
+    data: null
   }
 }
 

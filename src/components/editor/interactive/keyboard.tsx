@@ -3,7 +3,7 @@ import { useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 
 import { removeWord, mergeWords, undo, redo } from '@/store/items/editor'
-import WaveSurfer from 'wavesurfer.js'
+import {YouTubePlayer} from 'react-youtube'
 
 interface InteractiveEditorKeyboardComponentProps {
   updateWords: (words: WordsUpdates[]) => void
@@ -23,7 +23,7 @@ const InteractiveEditorKeyboardComponent = ({
 
   const propertiesLineKeypressHandler = async (
     type: keyof LLCTCallLine,
-    inst?: WaveSurfer,
+    inst?: YouTubePlayer,
     altKey?: boolean,
     shiftKey?: boolean
   ) => {
@@ -63,7 +63,7 @@ const InteractiveEditorKeyboardComponent = ({
 
   const propertiesWordKeypressHandler = async (
     type: keyof LLCTCallWord,
-    inst?: WaveSurfer,
+    inst?: YouTubePlayer,
     altKey?: boolean,
     shiftKey?: boolean
   ) => {

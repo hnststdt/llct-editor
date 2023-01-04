@@ -1,9 +1,9 @@
 import { RootState } from '@/store'
 import { useEffect, useRef, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import WaveSurfer from 'wavesurfer.js'
+import YouTube from 'react-youtube'
 
-import { setInstance } from '@/store/items/editor'
+import { setInstance, clearInstance } from '@/store/items/editor'
 import { PlayingState } from '@/@types/playing'
 import { EditorMode } from '@/@types/editor-mode'
 
@@ -13,7 +13,6 @@ interface PlayerComponentProps {
 
 const PlayerComponent = ({ audioSrc }: PlayerComponentProps) => {
   const dispatch = useDispatch()
-  const ref = useRef<HTMLDivElement>(null)
 
   const player = useSelector((state: RootState) => state.editor.player)
   const [loaded, setLoaded] = useState<boolean>(false)
@@ -21,25 +20,8 @@ const PlayerComponent = ({ audioSrc }: PlayerComponentProps) => {
   const mode = useSelector((state: RootState) => state.editor.mode)
 
   useEffect(() => {
-    if (!ref.current) {
-      return
-    }
-
-    const wave = WaveSurfer.create({
-      container: ref.current
-    })
-
-    wave.on('ready', () => {
-      if (wave) {
-        setLoaded(true)
-      }
-    })
-    dispatch(setInstance(wave))
-
     return () => {
-      if (player.instance && player.instance.isReady) {
-        player.instance.destroy()
-      }
+      dispatch(clearInstance())
     }
   }, [])
 
@@ -48,15 +30,9 @@ const PlayerComponent = ({ audioSrc }: PlayerComponentProps) => {
       return
     }
 
-    player.instance.on('audioprocess', () => {
-      requestAnimationFrame(() => {
-        player.sync!.setTime(player.instance!.getCurrentTime() * 100)
-      })
-    })
-
-    player.instance.on('seek', () => {
-      player.sync!.fullRenderOnce()
-    })
+    player.sync.updateHook = () => {
+      player.sync?.setTime(player.instance.getCurrentTime() * 100)
+    }
 
     setInitialized(true)
   }, [player.instance, player.sync, initialized])
@@ -81,7 +57,7 @@ const PlayerComponent = ({ audioSrc }: PlayerComponentProps) => {
       return
     }
 
-    player.instance.load(audioSrc)
+    player.instance.cueVideoById(audioSrc, 0, 'small')
   }, [player.instance, audioSrc])
 
   useEffect(() => {
@@ -90,9 +66,9 @@ const PlayerComponent = ({ audioSrc }: PlayerComponentProps) => {
     }
 
     if (player.state === PlayingState.Playing) {
-      player.instance.play()
+      player.instance.playVideo()
     } else {
-      player.instance.pause()
+      player.instance.pauseVideo()
     }
   }, [loaded, player.state])
 
@@ -109,10 +85,16 @@ const PlayerComponent = ({ audioSrc }: PlayerComponentProps) => {
   }, [player.state, player.sync])
 
   return (
-    <div className='player'>
-      <div className='player-wave' ref={ref}></div>
-      <audio id='editor-player'></audio>
-    </div>
+    <YouTube
+    className='player'
+    videoId={audioSrc}
+    opts={{width:200, height:200}}
+    onReady={(event) => {
+      dispatch(setInstance(event.target))
+      setLoaded(true)}
+    }
+    onStateChange={(event) => {event.data == 3 ? player.sync?.fullRenderOnce() : {}}}
+    />
   )
 }
 

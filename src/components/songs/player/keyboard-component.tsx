@@ -25,11 +25,11 @@ const PlayerKeyboardControllerComponent = () => {
 
       activated = true
     } else if (ev.code === 'ArrowLeft') {
-      instance && instance.skipBackward(-0.3)
+      instance && instance.seekTo(instance.getCurrentTime() - 0.3, true)
 
       activated = true
     } else if (ev.code === 'ArrowRight') {
-      instance && instance.skipForward(0.3)
+      instance && instance.seekTo(instance.getCurrentTime() + 0.3, true)
 
       activated = true
     }

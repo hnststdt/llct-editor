@@ -49,6 +49,7 @@ const EditorTab = () => {
   const mode = useSelector((state: RootState) => state.editor.mode)
   const type = useSelector((state: RootState) => state.editor.type)
   const [_, update] = useState<number>(0)
+  const [playbackRate, setPlaybackRate] = useState(1)
 
   const playStateChange = () => {
     dispatch(
@@ -65,7 +66,7 @@ const EditorTab = () => {
       return
     }
 
-    let rate = player.instance.getPlaybackRate()
+    let rate = playbackRate
 
     if (rate + add > 2) {
       rate = 0.25
@@ -76,6 +77,7 @@ const EditorTab = () => {
     }
 
     player.instance.setPlaybackRate(rate)
+    setPlaybackRate(rate)
     update(Math.random())
   }
 
@@ -131,6 +133,7 @@ const EditorTab = () => {
         <h1 className='music-title'>
           편집기 <span className='mute'>{music && music.title}</span>
         </h1>
+        <PlayerContainer></PlayerContainer>
         <div className='control-zone'>
           <ButtonComponent onClick={openHelpPage}>
             <MdHelp></MdHelp> 도움말
@@ -149,7 +152,7 @@ const EditorTab = () => {
             onClick={() => changePlayRate(0.25)}
             onRightClick={() => changePlayRate(-0.25)}
           >
-            {player.instance && player.instance.getPlaybackRate()}x
+            {player.instance && playbackRate}x
           </ButtonComponent>
           <ButtonComponent onClick={playStateChange}>
             {player.state === PlayingState.Playing ? (
@@ -166,7 +169,6 @@ const EditorTab = () => {
         </div>
       </div>
 
-      <PlayerContainer></PlayerContainer>
       <EditorContainer mode={mode}></EditorContainer>
     </div>
   )

@@ -257,13 +257,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/debounce@npm:*":
-  version: 3.0.0
-  resolution: "@types/debounce@npm:3.0.0"
-  checksum: e6f8a6fe7ca6c0629a1f3ed6f2bc87cd182444cebcc956522c8131fcc7474dde9bdfc5150e395035de32ebb4c8596d681fcbd14f3d1d15addb7d18d123a93d5e
-  languageName: node
-  linkType: hard
-
 "@types/emscripten@npm:^1.38.0":
   version: 1.39.5
   resolution: "@types/emscripten@npm:1.39.5"
@@ -478,12 +471,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/wavesurfer.js@npm:^5.1.0":
-  version: 5.1.0
-  resolution: "@types/wavesurfer.js@npm:5.1.0"
-  dependencies:
-    "@types/debounce": "*"
-  checksum: 8e6f62e1cf3e5ec4a909e96038cc2abd4364cecb24e176bc67e412284b9ed82d2a881389342ce3c7c0371870e72a34259d6d31a3e036c3a20a2b19b75e555259
+"@types/youtube-player@npm:^5.5.6":
+  version: 5.5.6
+  resolution: "@types/youtube-player@npm:5.5.6"
+  checksum: cb2362e7ce343dd764bd5d4218ecdbf76ffd82a175d74929662c96a57508def0f82bbcac1416912069c8a34354c160bb53531d6c994b19e8a51032c91359aca7
   languageName: node
   linkType: hard
 
@@ -2099,7 +2090,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"debug@npm:2.6.9, debug@npm:^2.2.0, debug@npm:^2.3.3, debug@npm:^2.6.9":
+"debug@npm:2.6.9, debug@npm:^2.2.0, debug@npm:^2.3.3, debug@npm:^2.6.6, debug@npm:^2.6.9":
   version: 2.6.9
   resolution: "debug@npm:2.6.9"
   dependencies:
@@ -3010,7 +3001,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"fast-deep-equal@npm:^3.1.1, fast-deep-equal@npm:^3.1.3":
+"fast-deep-equal@npm:3.1.3, fast-deep-equal@npm:^3.1.1, fast-deep-equal@npm:^3.1.3":
   version: 3.1.3
   resolution: "fast-deep-equal@npm:3.1.3"
   checksum: 451526766b219503131d11e823eaadd1533080b0be4860e316670b039dcaf31cd1007c2fe036a9b922abba7c040dfad5e942ed79d21f2ff849e50049f36e0fb7
@@ -4594,6 +4585,13 @@ fsevents@~2.3.2:
   languageName: node
   linkType: hard
 
+"load-script@npm:^1.0.0":
+  version: 1.0.0
+  resolution: "load-script@npm:1.0.0"
+  checksum: 9f907ee20dfe8068af210be73a072dd61a287566a23b5666b9c6b9957e66eb33cc7c6a790308cf307c373d7ff75265ab1dde779c3fff90d65535fb3a1c0a167a
+  languageName: node
+  linkType: hard
+
 "loader-runner@npm:^4.2.0":
   version: 4.2.0
   resolution: "loader-runner@npm:4.2.0"
@@ -6058,6 +6056,17 @@ fsevents@~2.3.2:
   languageName: node
   linkType: hard
 
+"prop-types@npm:15.8.1":
+  version: 15.8.1
+  resolution: "prop-types@npm:15.8.1"
+  dependencies:
+    loose-envify: ^1.4.0
+    object-assign: ^4.1.1
+    react-is: ^16.13.1
+  checksum: 4c0e99ebb880135a5f00d56364545f9ae123ec88a7d78d004218cdb4d8184f53455696cbc50c2994916748c38f12f3b535d7be06cb4f893c2ad8fd03c23245c5
+  languageName: node
+  linkType: hard
+
 "prop-types@npm:^15.5.10, prop-types@npm:^15.6.2, prop-types@npm:^15.7.2":
   version: 15.7.2
   resolution: "prop-types@npm:15.7.2"
@@ -6183,7 +6192,7 @@ fsevents@~2.3.2:
     "@types/react-dom": ^17.0.9
     "@types/react-redux": ^7.1.18
     "@types/uuid": ^8.3.1
-    "@types/wavesurfer.js": ^5.1.0
+    "@types/youtube-player": ^5.5.6
     "@typescript-eslint/eslint-plugin": ^4.28.4
     "@typescript-eslint/parser": ^4.28.4
     "@yarnpkg/pnpify": ^3.0.0-rc.12
@@ -6210,6 +6219,7 @@ fsevents@~2.3.2:
     react-monaco-editor: ^0.43.0
     react-redux: ^7.2.4
     react-router-dom: ^5.2.0
+    react-youtube: ^10.1.0
     redux: ^4.1.0
     redux-saga: ^1.1.3
     sass: ^1.35.2
@@ -6220,7 +6230,6 @@ fsevents@~2.3.2:
     typescript: ^4.3.5
     uuid: ^8.3.2
     vs: ^0.1.0
-    wavesurfer.js: ^5.1.0
     webpack: ^5.45.1
     webpack-cli: ^4.7.2
     webpack-dev-server: ^3.11.2
@@ -6341,6 +6350,19 @@ fsevents@~2.3.2:
   peerDependencies:
     react: ">=15"
   checksum: 4437eaa9bab02d46a7d6ea4915731c1f31642d6c3e3f7b9f951f5c6a9a73f35d4deb43a2d6b4be85f27816a20de96c3b9a9239f4b7e9136742106794ad20e95c
+  languageName: node
+  linkType: hard
+
+"react-youtube@npm:^10.1.0":
+  version: 10.1.0
+  resolution: "react-youtube@npm:10.1.0"
+  dependencies:
+    fast-deep-equal: 3.1.3
+    prop-types: 15.8.1
+    youtube-player: 5.5.2
+  peerDependencies:
+    react: ">=0.14.1"
+  checksum: 5026144dda80b4008e154f3574acbf4fc0f13649a1bde21d24cbf64341d385a5aabeefa05090e85fdc66efb191137a40c7da5b3e676b9ea2af848a2636fdbdb3
   languageName: node
   linkType: hard
 
@@ -7014,6 +7036,13 @@ resolve@^2.0.0-next.3:
   version: 3.0.3
   resolution: "signal-exit@npm:3.0.3"
   checksum: f8f3fec95c8d1f9ad7e3cce07e1195f84e7a85cdcb4e825e8a2b76aa5406a039083d2bc9662b3cf40e6948262f41277047d20e6fbd58c77edced0b18fab647d8
+  languageName: node
+  linkType: hard
+
+"sister@npm:^3.0.0":
+  version: 3.0.2
+  resolution: "sister@npm:3.0.2"
+  checksum: 32bfe26361014a3a0e41140cb2bf2f2beb172c4e9fc1919f06d46cc8a3399a563012cecfc128b7833f160d9570285878de162f056d84673443ac05d078cc7f9f
   languageName: node
   linkType: hard
 
@@ -8063,13 +8092,6 @@ typescript@^4.3.5:
   languageName: node
   linkType: hard
 
-"wavesurfer.js@npm:^5.1.0":
-  version: 5.1.0
-  resolution: "wavesurfer.js@npm:5.1.0"
-  checksum: 2bef9c5139397d665a4d9addd0fdd4744e10eee1647c6307ea00a747bd3cd2e484522ad6f816ee0f2b06e53249e3062ba481f3927cf101a3188f5baef70096a4
-  languageName: node
-  linkType: hard
-
 "wbuf@npm:^1.1.0, wbuf@npm:^1.7.3":
   version: 1.7.3
   resolution: "wbuf@npm:1.7.3"
@@ -8405,5 +8427,16 @@ typescript@^4.3.5:
   version: 0.1.0
   resolution: "yocto-queue@npm:0.1.0"
   checksum: 096c3b40beb2804659539be1605a35c58eb0c85285f94b77b3e924f42ee265c1a40bf9f4153770039517146b469a964d51742395f35ca8135fc9f7e4982b785d
+  languageName: node
+  linkType: hard
+
+"youtube-player@npm:5.5.2":
+  version: 5.5.2
+  resolution: "youtube-player@npm:5.5.2"
+  dependencies:
+    debug: ^2.6.6
+    load-script: ^1.0.0
+    sister: ^3.0.0
+  checksum: 2d62315551137a9cdf963e42d7d3d3b589da4811569762441946eb37716cf5c8d364e72d5639c61beeddf6ec82063154aa485bc401edc086232bcbcb32f657c3
   languageName: node
   linkType: hard

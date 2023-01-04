@@ -2,6 +2,7 @@ export default class CallTimeSync {
   root: HTMLDivElement
   timer?: number
   time: number
+  updateHook?: (() => void)
 
   caches: { lines: NodeListOf<Element>; lineWords: NodeListOf<Element>[] }
   fullRender: boolean
@@ -36,6 +37,7 @@ export default class CallTimeSync {
 
     const update = () => {
       this.update()
+      this.updateHook?.()
 
       this.timer = requestAnimationFrame(update.bind(this))
     }
