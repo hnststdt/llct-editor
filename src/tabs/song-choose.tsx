@@ -21,7 +21,7 @@ const SongChooseTab = () => {
         page: 1
       },
       document.title,
-      '/?id=' + music.id
+      '?id=' + music.id
     )
   }
 
