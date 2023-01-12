@@ -70,15 +70,16 @@ module.exports = (_, argv) => {
         filename: 'index.html'
       }),
       new DefinePlugin({
-        'process.env.API_SERVER': JSON.stringify(process.env.API_SERVER)
+        'process.env.API_SERVER': JSON.stringify(process.env.API_SERVER),
+        'process.env.STATIC_MODE': JSON.stringify(process.env.STATIC_MODE)
+      }),
+      new CopyWebpackPlugin({
+        patterns: [
+          {
+            from: 'public'
+          }
+        ]
       })
-      // new CopyWebpackPlugin({
-      //   patterns: [
-      //     {
-      //       from: 'public'
-      //     }
-      //   ]
-      // })
     ],
     optimization: {
       splitChunks: {
